@@ -43,6 +43,11 @@ await writeFile(
 );
 await writeFile(
   join(destination, "_redirects"),
-  "/download https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe 302\n",
+  [
+    "/api/update /.netlify/functions/update 200!",
+    "/api/version /.netlify/functions/update 200!",
+    "/download https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe 302",
+    "",
+  ].join("\n"),
 );
 console.log("Static website built in frontend/dist.");

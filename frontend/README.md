@@ -36,6 +36,8 @@ also runs the update handler locally; update requests require GitHub connectivit
 The hyphenated alias redirects website pages to the primary domain, preserving
 the requested path. API rewrites run before that redirect, so update checks can
 use either host. Both names must be added to this Netlify site for routing and TLS.
+The build includes the API rewrites in `dist/_redirects` so the published files
+carry their routing rules as well as the root Netlify configuration.
 The primary domain also appears in the canonical URL and sitemap.
 
 See [Netlify build configuration](https://docs.netlify.com/build/configure-builds/file-based-configuration/)
