@@ -8,6 +8,22 @@
 [build.environment]
   NODE_VERSION = "24"
 
+[functions]
+  directory = "netlify/functions"
+
+# API rewrites precede the website alias redirect so either host can answer.
+[[redirects]]
+  from = "/api/update"
+  to = "/.netlify/functions/update"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/version"
+  to = "/.netlify/functions/update"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "https://drink-water.hardikgarg.me/*"
   to = "https://drinkwater.hardikgarg.me/:splat"

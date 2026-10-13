@@ -8,7 +8,8 @@ Set-StrictMode -Version Latest
 $windowsRoot = Split-Path -Parent $PSScriptRoot
 $artifactsRoot = Join-Path $windowsRoot 'artifacts'
 $executable = Join-Path $artifactsRoot 'publish/win-x64/DrinkWater.exe'
-$installer = Join-Path $artifactsRoot 'installer/DrinkWater-1.0.0-win-x64-Setup.exe'
+$appVersion = ([xml](Get-Content -LiteralPath (Join-Path $windowsRoot 'Directory.Build.props') -Raw)).Project.PropertyGroup.Version
+$installer = Join-Path $artifactsRoot ('installer/DrinkWater-' + $appVersion + '-win-x64-Setup.exe')
 $installationDirectory = $null
 $primaryProcess = $null
 $originalDotnetRoot = $env:DOTNET_ROOT

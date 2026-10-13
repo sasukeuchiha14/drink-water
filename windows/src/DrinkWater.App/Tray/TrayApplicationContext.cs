@@ -1,9 +1,11 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Reflection;
 using System.Security;
 using DrinkWater.App.Diagnostics;
 using DrinkWater.App.Persistence;
+using DrinkWater.App.Updates;
 using DrinkWater.App.WindowsIntegration;
 using DrinkWater.Core;
 
@@ -24,6 +26,14 @@ public sealed class TrayApplicationContext : ApplicationContext
     private readonly ToolStripMenuItem _soundEnabled = new("Play water sound");
     private readonly ToolStripMenuItem _startupEnabled = new("Start with Windows");
     private readonly ToolStripMenuItem _remindNow = new("Remind me now");
+    private readonly ToolStripMenuItem _checkUpdates = new("Check for updates...");
+    private readonly ToolStripMenuItem _updateStatus = new() { Enabled = false };
+    private readonly ToolStripMenuItem _downloadUpdate = new() { Visible = false };
+    private readonly HttpClient _updateClient = new(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = Timeout.InfiniteTimeSpan };
+    private readonly CancellationTokenSource _lifetime = new();
+    private readonly ReleaseVersion _currentVersion;
+    private UpdateCheckResult? _availableUpdate;
+    private bool _checkingUpdates;
     private readonly Dictionary<int, ToolStripMenuItem> _intervals = [];
     private readonly System.Windows.Forms.Timer _timer = new() { Interval = 1000 };
     private readonly SessionWindow _session = new();
@@ -40,6 +50,10 @@ public sealed class TrayApplicationContext : ApplicationContext
         _canSave = loaded.CanSave;
         _pendingNotice = loaded.Warning;
         _schedule = new(loaded.Preferences);
+        Version installed = Assembly.GetExecutingAssembly().GetName().Version
+            ?? throw new InvalidOperationException("The installed version is unavailable.");
+        _currentVersion = new(installed.Major, installed.Minor, installed.Build);
+        _updateStatus.Text = $"Version {_currentVersion}";
         _startup = new(Environment.ProcessPath ?? throw new InvalidOperationException("The application path is unavailable."));
         _sound = new(Path.Combine(AppContext.BaseDirectory, "Assets", "water.mp3"));
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("DrinkWater.App.logo.ico")
@@ -94,8 +108,11 @@ public sealed class TrayApplicationContext : ApplicationContext
         startupSettings.Click += (_, _) => OpenStartupSettings();
         ToolStripMenuItem quit = new("Quit");
         quit.Click += (_, _) => ExitThread();
+        _checkUpdates.Click += async (_, _) => await CheckForUpdatesAsync();
+        _downloadUpdate.Click += (_, _) => OpenUpdateDownload();
         _menu.Items.AddRange([_countdown, new ToolStripSeparator(), intervalMenu, new ToolStripSeparator(),
-            _enabled, _soundEnabled, _startupEnabled, startupSettings, new ToolStripSeparator(), _remindNow, quit]);
+            _enabled, _soundEnabled, _startupEnabled, startupSettings, new ToolStripSeparator(), _remindNow,
+            _checkUpdates, _updateStatus, _downloadUpdate, new ToolStripSeparator(), quit]);
     }
 
     private void Tick(object? sender, EventArgs args)
@@ -223,6 +240,75 @@ public sealed class TrayApplicationContext : ApplicationContext
     private static bool IsStartupError(Exception error) =>
         error is IOException or UnauthorizedAccessException or SecurityException or InvalidOperationException or ArgumentException;
 
+    private async Task CheckForUpdatesAsync()
+    {
+        if (_checkingUpdates || _disposed)
+        {
+            return;
+        }
+
+        _checkingUpdates = true;
+        _checkUpdates.Enabled = false;
+        _checkUpdates.Text = "Checking for updates...";
+        _updateStatus.Text = $"Version {_currentVersion} — checking...";
+        try
+        {
+            UpdateCheckResult result = await new UpdateChecker(_updateClient).CheckAsync(_currentVersion, _lifetime.Token);
+            if (_disposed)
+            {
+                return;
+            }
+
+            _availableUpdate = result.UpdateAvailable ? result : null;
+            _downloadUpdate.Visible = result.UpdateAvailable;
+            _downloadUpdate.Text = $"Download version {result.LatestVersion}...";
+            _updateStatus.Text = result.UpdateAvailable ? $"Version {result.LatestVersion} available" : $"Version {_currentVersion} — up to date";
+            Notify("Drink Water updates", result.UpdateAvailable
+                ? $"Version {result.LatestVersion} is available. Right-click the tray icon and choose Download version {result.LatestVersion}. Run the installer to update and keep your settings."
+                : $"You're up to date. Installed version: {_currentVersion}.");
+        }
+        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested)
+        {
+            // Normal shutdown cancels the request without showing a notification.
+        }
+        catch (HttpRequestException error)
+        {
+            _log.Write("Checking for updates failed.", error);
+            if (!_disposed)
+            {
+                _updateStatus.Text = $"Version {_currentVersion} — update check failed";
+                Notify("Drink Water updates", "Couldn't check for updates. Check your connection and try again. Any previously found download remains available.");
+            }
+        }
+        finally
+        {
+            _checkingUpdates = false;
+            if (!_disposed)
+            {
+                _checkUpdates.Text = "Check for updates...";
+                _checkUpdates.Enabled = true;
+            }
+        }
+    }
+
+    private void OpenUpdateDownload()
+    {
+        if (_availableUpdate is null)
+        {
+            return;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(_availableUpdate.DownloadUrl.AbsoluteUri) { UseShellExecute = true });
+        }
+        catch (Exception error) when (error is Win32Exception or InvalidOperationException)
+        {
+            _log.Write("Opening the update download failed.", error);
+            Notify("Drink Water updates", "Open the Drink Water website to download the latest installer.");
+        }
+    }
+
     private void Notify(string title, string message) => _tray.ShowBalloonTip(5000, title, message, ToolTipIcon.None);
 
     private void StopSound()
@@ -261,6 +347,9 @@ public sealed class TrayApplicationContext : ApplicationContext
         }
 
         _disposed = true;
+        _lifetime.Cancel();
+        _updateClient.Dispose();
+        _lifetime.Dispose();
         _timer.Stop();
         _timer.Dispose();
         StopSound();

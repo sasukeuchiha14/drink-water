@@ -20,6 +20,7 @@
     <meta property="og:url" content="https://drinkwater.hardikgarg.me/" />
     <link rel="canonical" href="https://drinkwater.hardikgarg.me/" />
     <link rel="icon" href="/assets/logo.ico" sizes="any" />
+    <script src="/theme.js"></script>
     <link rel="stylesheet" href="/styles.css" />
     <script type="module" src="/main.js"></script>
     <title>Drink Water — Your next sip, right on time</title>
@@ -32,6 +33,24 @@
         <span>Drink Water<span class="brand-dot">.</span></span>
       </a>
       <nav aria-label="Main navigation">
+        <button
+          class="theme-toggle"
+          id="theme-toggle"
+          type="button"
+          aria-label="Switch to dark theme"
+          aria-pressed="false"
+          title="Switch to dark theme"
+        >
+          <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z" />
+          </svg>
+          <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"
+            />
+          </svg>
+        </button>
         <a class="nav-link" href="#how-it-works">How it works</a>
         <a class="nav-link" href="https://github.com/sasukeuchiha14/drink-water"
           >GitHub <span aria-hidden="true">↗</span></a
@@ -334,9 +353,23 @@
               Does it collect my data?<span aria-hidden="true">+</span>
             </summary>
             <p>
-              The desktop app has no network functionality, accounts, or
-              telemetry. Preferences and diagnostic logs stay on your PC. This
-              website uses no tracking scripts or cookies.
+              The app connects to this website only when you choose Check for
+              updates, sending its installed version. It has no accounts or
+              telemetry. Preferences and logs stay on your PC. This website has
+              no tracking scripts or cookies; your theme choice is saved only in
+              your browser.
+            </p>
+          </details>
+          <details>
+            <summary>
+              How do I update the app?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              Right-click the glass and choose Check for updates. If a newer
+              version is available, choose Download version and run the
+              installer. It upgrades your existing installation and keeps your
+              preferences. For version 1.0.0, download the latest installer here
+              first; uninstalling is unnecessary.
             </p>
           </details>
           <details>

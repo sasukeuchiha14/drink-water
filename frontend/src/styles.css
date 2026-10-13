@@ -8,10 +8,73 @@
   --line: hsl(210 18% 87%);
   --soft-blue: hsl(207 54% 94%);
   --white: hsl(0 0% 100%);
+  --on-blue: hsl(0 0% 100%);
+  --control: hsl(210 17% 96%);
+  --selected: hsl(211 72% 94%);
+  --selected-line: hsl(211 50% 84%);
+  --switch-track: hsl(210 10% 82%);
+  --switch-knob: hsl(0 0% 100%);
+  --taskbar: hsl(207 40% 98% / 0.93);
+  --setup: hsl(207 26% 95%);
   font-family: "Segoe UI Variable", "Segoe UI", Inter, system-ui, sans-serif;
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: hsl(210 37% 11%);
+  --ink: hsl(207 27% 92%);
+  --muted: hsl(208 17% 70%);
+  --blue: hsl(207 77% 69%);
+  --blue-hover: hsl(207 82% 77%);
+  --line: hsl(209 22% 27%);
+  --soft-blue: hsl(211 33% 17%);
+  --white: hsl(210 28% 15%);
+  --on-blue: hsl(211 37% 12%);
+  --control: hsl(210 24% 21%);
+  --selected: hsl(209 41% 24%);
+  --selected-line: hsl(209 37% 38%);
+  --switch-track: hsl(209 17% 37%);
+  --taskbar: hsl(210 30% 14% / 0.96);
+  --setup: hsl(210 32% 13%);
+}
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 10px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.theme-toggle:hover {
+  color: var(--ink);
+  background: var(--soft-blue);
+}
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.theme-toggle .theme-sun,
+:root[data-theme="dark"] .theme-toggle .theme-moon {
+  display: none;
+}
+:root[data-theme="dark"] .theme-toggle .theme-sun {
+  display: block;
+}
+:root[data-theme="dark"] img[src^="/assets/logo.ico"] {
+  filter: invert(1);
 }
 
 * {
@@ -150,7 +213,7 @@ nav {
   min-height: 58px;
   padding: 16px 24px;
   background: var(--blue);
-  color: var(--white);
+  color: var(--on-blue);
   border-color: var(--blue);
   font-size: 16px;
   box-shadow: 0 4px 10px hsl(213 78% 42% / 0.1);
@@ -252,7 +315,7 @@ h1 {
 .desktop-scene {
   background: var(--soft-blue);
   min-height: 475px;
-  border: 1px solid hsl(207 31% 87%);
+  border: 1px solid var(--line);
   border-radius: 14px;
   position: relative;
   overflow: hidden;
@@ -266,7 +329,7 @@ h1 {
   position: absolute;
   width: 330px;
   height: 330px;
-  border: 1px solid hsl(207 31% 85% / 0.7);
+  border: 1px solid var(--line);
   border-radius: 50%;
   left: -138px;
   top: 115px;
@@ -276,7 +339,7 @@ h1 {
   position: absolute;
   width: 430px;
   height: 430px;
-  border: 1px solid hsl(207 31% 85% / 0.5);
+  border: 1px solid var(--line);
   border-radius: 50%;
   left: -187px;
   top: 63px;
@@ -290,7 +353,7 @@ h1 {
   gap: 9px;
   font-size: 10px;
   font-weight: 500;
-  color: hsl(209 20% 48%);
+  color: var(--muted);
   letter-spacing: 0.02em;
 }
 .scene-square {
@@ -305,7 +368,7 @@ h1 {
   position: relative;
   z-index: 2;
   border-radius: 10px;
-  border: 1px solid hsl(210 18% 84%);
+  border: 1px solid var(--line);
   padding: 17px 18px 12px;
   box-shadow: 0 12px 30px hsl(210 25% 25% / 0.08);
 }
@@ -370,7 +433,7 @@ h1 {
 }
 .interval-group button {
   border: 1px solid transparent;
-  background: hsl(210 17% 96%);
+  background: var(--control);
   border-radius: 5px;
   min-height: 39px;
   padding: 6px;
@@ -378,8 +441,8 @@ h1 {
   color: var(--muted);
 }
 .interval-group button[aria-pressed="true"] {
-  background: hsl(211 72% 94%);
-  border-color: hsl(211 50% 84%);
+  background: var(--selected);
+  border-color: var(--selected-line);
   color: var(--blue);
   font-weight: 600;
 }
@@ -413,7 +476,7 @@ h1 {
   width: 28px;
   height: 16px;
   border-radius: 12px;
-  background: hsl(210 10% 82%);
+  background: var(--switch-track);
   position: relative;
   pointer-events: none;
   transition: background 0.18s ease;
@@ -424,7 +487,7 @@ h1 {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--white);
+  background: var(--switch-knob);
   top: 2px;
   left: 2px;
   transition: transform 0.18s ease;
@@ -466,8 +529,8 @@ h1 {
   right: 0;
   z-index: 3;
   height: 49px;
-  background: hsl(207 40% 98% / 0.93);
-  border-top: 1px solid hsl(207 20% 84%);
+  background: var(--taskbar);
+  border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
   gap: 15px;
@@ -484,7 +547,7 @@ h1 {
   border-radius: 1px;
 }
 .taskbar-line {
-  background: hsl(207 20% 84%);
+  background: var(--line);
   width: 45px;
   height: 5px;
   border-radius: 2px;
@@ -499,7 +562,7 @@ h1 {
 .active-tray-icon {
   padding: 5px 7px;
   position: relative;
-  background: hsl(211 55% 91%);
+  background: var(--selected);
   border-radius: 4px;
 }
 .active-tray-icon::after {
@@ -655,7 +718,7 @@ h3 {
   background: var(--white);
 }
 .feature-detail > span.selected {
-  border-color: hsl(211 50% 84%);
+  border-color: var(--selected-line);
   color: var(--blue);
   background: var(--soft-blue);
 }
@@ -667,7 +730,7 @@ h3 {
   color: var(--muted);
 }
 .setup-section {
-  background: hsl(207 26% 95%);
+  background: var(--setup);
   border-block: 1px solid var(--line);
   scroll-margin-top: 32px;
 }
@@ -774,7 +837,7 @@ details[open] summary span {
 }
 .closing-section {
   background: var(--soft-blue);
-  border: 1px solid hsl(207 31% 87%);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 47px 53px;
   display: flex;
@@ -851,7 +914,7 @@ details[open] summary span {
   nav {
     gap: 20px;
   }
-  .nav-link:first-child {
+  .nav-link[href="#how-it-works"] {
     display: none;
   }
   .hero {
@@ -936,6 +999,9 @@ details[open] summary span {
   }
 }
 @media (max-width: 440px) {
+  .site-header {
+    gap: 12px;
+  }
   .container {
     width: calc(100% - 40px);
   }
@@ -948,7 +1014,7 @@ details[open] summary span {
     height: 27px;
   }
   nav {
-    gap: 11px;
+    gap: 8px;
   }
   .nav-link {
     display: none;
@@ -1001,6 +1067,11 @@ details[open] summary span {
   }
   summary {
     font-size: 13px;
+  }
+}
+@media (max-width: 360px) {
+  .site-header .button-small {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

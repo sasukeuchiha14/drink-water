@@ -75,8 +75,9 @@ pwsh -NoProfile -File scripts/Build.ps1
 to publish only, or pass `-CompilerPath 'C:/path/to/ISCC.exe'`.
 
 Tools, package caches, binaries, and artifacts are ignored by Git. Build scripts
-disable .NET CLI telemetry and keep caches in `.tools`. The application has no
-network functionality or telemetry.
+disable .NET CLI telemetry and keep caches in `.tools`. The application contacts
+the website only for manual update checks, sending the installed version. It
+has no telemetry, accounts, background update polling, or automatic installation.
 
 ```text
 src/DrinkWater.Core/     Preferences, scheduling, reminder delivery

@@ -19,10 +19,16 @@ required. The current installer is unsigned.
 - Optional launch at sign-in, managed in the app or Windows settings.
 - Saved preferences, one instance per user session, and sleep/resume handling.
 - A per-user installer, shortcuts, upgrades, and clean uninstallation.
+- Manual update checks with a trusted GitHub installer download.
 
-The desktop app has no network functionality, accounts, or telemetry. Settings
+The desktop app connects to the website only when you choose **Check for updates**,
+sending its installed version. There are no accounts or telemetry. Settings
 and diagnostic logs stay on your PC. Windows controls notification visibility,
 Do Not Disturb, and its own notification sound.
+
+To update, run the newer installer over the existing installation. It preserves
+your preferences and startup choice; uninstalling first is unnecessary. Version
+1.0.0 users download the new installer from the website once to get update checks.
 
 ## Repository
 
@@ -30,7 +36,7 @@ Do Not Disturb, and its own notification sound.
 windows/       C# app, tests, installer, and build scripts
 frontend/      Download website and Netlify deployment instructions
 .github/       Application checks and automatic release publishing
-logo.ico       Original application and website icon
+logo.ico       Application, fixed tray, and website icon
 water.mp3      Original reminder sound
 drink_water.py Original Python implementation
 netlify.toml   Website build, routing, and security headers
@@ -58,7 +64,8 @@ errors, SDK analyzers, formatting checks, and focused tests.
 ## Download website and Netlify
 
 Read the [frontend instructions](frontend/README.md). The site uses static
-HTML/CSS/JavaScript, an interactive browser preview, and GitHub release downloads.
+HTML/CSS/JavaScript, light and dark themes, an interactive browser preview, a
+Netlify update endpoint, and GitHub release downloads.
 
 ```powershell
 cd frontend
@@ -71,7 +78,8 @@ Import this GitHub repository into Netlify. The root `netlify.toml` configures
 base directory `frontend`, publish directory `dist`, and the build command.
 Add `drinkwater.hardikgarg.me` as the primary domain and
 `drink-water.hardikgarg.me` as an alias, then configure your DNS and HTTPS in
-Netlify. The alias redirects to the primary domain.
+Netlify. Website pages on the alias redirect to the primary domain; the update
+API answers on both hosts. See the frontend README for the endpoint contract.
 
 ## Publishing a Windows release
 
@@ -79,8 +87,8 @@ Update `windows/Directory.Build.props` and `windows/RELEASE_NOTES.md`, verify th
 changes, commit them, then push a matching version tag:
 
 ```powershell
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.1.0
+git push origin v1.1.0
 ```
 
 The release workflow builds and checks the Windows app, compiles the installer,

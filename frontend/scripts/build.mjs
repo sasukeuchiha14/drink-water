@@ -20,6 +20,7 @@ for (const name of [
   "index.html",
   "styles.css",
   "main.js",
+  "theme.js",
   "preview-timer.js",
   "404.html",
   "robots.txt",
