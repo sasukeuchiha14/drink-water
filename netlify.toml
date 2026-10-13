@@ -1,0 +1,35 @@
+[build]
+  base = "frontend"
+  command = "npm run check && npm run build"
+  publish = "dist"
+  # Rebuild when the shared icon or Windows version changes outside frontend.
+  ignore = "exit 1"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+[[redirects]]
+  from = "https://drink-water.hardikgarg.me/*"
+  to = "https://drinkwater.hardikgarg.me/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/download"
+  to = "https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe"
+  status = 302
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

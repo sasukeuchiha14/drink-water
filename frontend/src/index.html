@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8fafb" />
+    <meta
+      name="description"
+      content="A quiet drink-water reminder for your Windows tray. Choose 10, 30, or 60 minutes, pause whenever you like, and build a simple daily habit."
+    />
+    <meta
+      property="og:title"
+      content="Drink Water — Your next sip, right on time"
+    />
+    <meta
+      property="og:description"
+      content="A small, free Windows tray app that makes remembering your next sip a little easier."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://drinkwater.hardikgarg.me/" />
+    <link rel="canonical" href="https://drinkwater.hardikgarg.me/" />
+    <link rel="icon" href="/assets/logo.ico" sizes="any" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="module" src="/main.js"></script>
+    <title>Drink Water — Your next sip, right on time</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header container">
+      <a class="brand" href="/" aria-label="Drink Water home">
+        <img src="/assets/logo.ico" width="32" height="32" alt="" />
+        <span>Drink Water<span class="brand-dot">.</span></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a class="nav-link" href="#how-it-works">How it works</a>
+        <a class="nav-link" href="https://github.com/sasukeuchiha14/drink-water"
+          >GitHub <span aria-hidden="true">↗</span></a
+        >
+        <a
+          class="button button-small"
+          href="https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe"
+          >Get the app <span aria-hidden="true">↓</span></a
+        >
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero container" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">
+            <span class="status-dot" aria-hidden="true"></span>A small habit,
+            made easier
+          </p>
+          <h1 id="hero-title">
+            Your next sip,<br /><span class="accent-text">right on time.</span>
+          </h1>
+          <p class="hero-description">
+            A quiet reminder in your Windows tray. Set your interval, get on
+            with your day, and let Drink Water take care of the nudge.
+          </p>
+          <a
+            class="button button-primary"
+            href="https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe"
+          >
+            <svg aria-hidden="true" viewBox="0 0 20 20" class="windows-mark">
+              <path
+                d="M1 3.5 8.5 2.5v7H1Zm8.5-1.2L19 1v8.5H9.5ZM1 10.5h7.5v7L1 16.5Zm8.5 0H19V19l-9.5-1.3Z"
+              />
+            </svg>
+            Download for Windows
+            <span class="download-arrow" aria-hidden="true">↓</span>
+          </a>
+          <p class="download-meta">
+            v__APP_VERSION__ <span>·</span> Windows 10 / 11
+            <span>·</span> 64-bit
+          </p>
+          <div class="hero-note">
+            <span class="tiny-check" aria-hidden="true">✓</span> Free &amp; open
+            source
+            <span class="note-separator" aria-hidden="true">/</span> Yours to
+            keep
+          </div>
+        </div>
+
+        <figure class="preview" aria-labelledby="preview-caption">
+          <div class="desktop-scene">
+            <div class="scene-label">
+              <span class="scene-square" aria-hidden="true"></span>Fits right
+              into your day
+            </div>
+            <div
+              class="preview-notification"
+              id="preview-notification"
+              role="status"
+              hidden
+            >
+              <img src="/assets/logo.ico" width="28" height="28" alt="" />
+              <div>
+                <strong>Drink Water</strong>
+                <p>Time for a drink of water.</p>
+              </div>
+            </div>
+            <div class="tray-menu">
+              <div class="menu-heading">
+                <img
+                  src="/assets/logo.ico"
+                  width="28"
+                  height="28"
+                  alt=""
+                /><strong>Drink Water</strong
+                ><span class="menu-indicator" aria-hidden="true"></span>
+              </div>
+              <div class="countdown-block">
+                <p id="preview-countdown-label">Next reminder in</p>
+                <span class="countdown" id="preview-countdown" aria-live="off"
+                  >30:00</span
+                >
+                <div class="countdown-rule">
+                  <span aria-hidden="true"></span>
+                </div>
+              </div>
+              <div
+                class="interval-group"
+                role="group"
+                aria-label="Preview reminder interval"
+              >
+                <button type="button" data-interval="10" aria-pressed="false">
+                  10 min
+                </button>
+                <button type="button" data-interval="30" aria-pressed="true">
+                  30 min
+                </button>
+                <button type="button" data-interval="60" aria-pressed="false">
+                  1 hour
+                </button>
+              </div>
+              <div class="menu-settings">
+                <label class="menu-option" for="preview-enabled"
+                  ><span>Enable reminders</span
+                  ><input type="checkbox" id="preview-enabled" checked /><span
+                    class="toggle"
+                    aria-hidden="true"
+                  ></span
+                ></label>
+                <label class="menu-option" for="preview-sound"
+                  ><span>Play water sound</span
+                  ><input type="checkbox" id="preview-sound" checked /><span
+                    class="toggle"
+                    aria-hidden="true"
+                  ></span
+                ></label>
+                <label class="menu-option" for="preview-startup"
+                  ><span>Start with Windows</span
+                  ><input type="checkbox" id="preview-startup" /><span
+                    class="toggle"
+                    aria-hidden="true"
+                  ></span
+                ></label>
+              </div>
+              <button class="remind-button" type="button" id="preview-remind">
+                <span aria-hidden="true">↻</span> Remind me now
+              </button>
+            </div>
+            <div class="desktop-taskbar">
+              <div class="taskbar-start" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <span class="taskbar-line" aria-hidden="true"></span>
+              <div class="taskbar-tray">
+                <span aria-hidden="true">⌃</span>
+                <div class="active-tray-icon">
+                  <img
+                    src="/assets/logo.ico"
+                    width="23"
+                    height="23"
+                    alt="Drink Water tray icon"
+                  />
+                </div>
+                <div class="taskbar-time" aria-hidden="true">
+                  09:41<span>14/10/2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <figcaption id="preview-caption">
+            <span class="preview-caption-dot" aria-hidden="true"></span
+            >Interactive preview. Try an interval or pause the reminders.
+          </figcaption>
+          <p class="visually-hidden" id="preview-status" role="status"></p>
+        </figure>
+      </section>
+
+      <div class="quiet-promise container">
+        <span aria-hidden="true">✳</span>
+        <p>A little less to remember. A little more room for your day.</p>
+        <span class="promise-line" aria-hidden="true"></span>
+      </div>
+
+      <section class="features container" aria-labelledby="features-title">
+        <div class="section-heading">
+          <p class="eyebrow">Simple by design</p>
+          <h2 id="features-title">
+            A useful little habit.<br />A very small footprint in your day.
+          </h2>
+        </div>
+        <div class="feature-grid">
+          <article class="feature">
+            <span class="feature-number">01 / YOUR PACE</span>
+            <h3>A rhythm that fits.</h3>
+            <p>
+              Choose a reminder every 10 minutes, 30 minutes, or one hour.
+              Change it whenever your day does.
+            </p>
+            <div class="feature-detail" aria-hidden="true">
+              <span>10m</span><span class="selected">30m</span><span>1h</span>
+            </div>
+          </article>
+          <article class="feature">
+            <span class="feature-number">02 / YOUR SPACE</span>
+            <h3>There when you need it.</h3>
+            <p>
+              A small icon beside your clock. Pause reminders, switch off the
+              water sound, or check when your next nudge is due.
+            </p>
+            <div class="feature-detail">
+              <span class="detail-status"
+                ><span class="status-dot" aria-hidden="true"></span>Quietly in
+                your tray</span
+              >
+            </div>
+          </article>
+          <article class="feature">
+            <span class="feature-number">03 / YOUR CHOICE</span>
+            <h3>Ready for your routine.</h3>
+            <p>
+              Let it start when you sign in, or open it yourself. Your
+              preferences are remembered for next time.
+            </p>
+            <div class="feature-detail">
+              <span class="detail-status"
+                ><span class="tiny-check" aria-hidden="true">✓</span>Startup is
+                always your choice</span
+              >
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section
+        class="setup-section"
+        id="how-it-works"
+        aria-labelledby="setup-title"
+      >
+        <div class="setup-inner container">
+          <div class="setup-copy">
+            <p class="eyebrow">Three small steps</p>
+            <h2 id="setup-title">From download<br />to your first sip.</h2>
+            <p>
+              The installer includes everything the app needs. You can be up and
+              running in a moment.
+            </p>
+            <a
+              class="text-link"
+              href="https://github.com/sasukeuchiha14/drink-water/releases/latest"
+              >See the latest release <span aria-hidden="true">↗</span></a
+            >
+          </div>
+          <ol class="setup-steps">
+            <li>
+              <span class="step-number" aria-hidden="true">1</span>
+              <div>
+                <h3>Download the Windows installer.</h3>
+                <p>
+                  Get the latest version directly from the project's GitHub
+                  release.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="step-number" aria-hidden="true">2</span>
+              <div>
+                <h3>Install it for your account.</h3>
+                <p>
+                  Open the installer and follow the steps. Choose whether you'd
+                  like it to launch when you sign in.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="step-number" aria-hidden="true">3</span>
+              <div>
+                <h3>Find the glass beside your clock.</h3>
+                <p>
+                  Right-click to pick your interval. Check the hidden icons menu
+                  if you don't see it straight away.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="faq-section container" aria-labelledby="faq-title">
+        <div class="faq-heading">
+          <p class="eyebrow">Good to know</p>
+          <h2 id="faq-title">A few details,<br />before your first sip.</h2>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>
+              Which versions of Windows does it work on?<span aria-hidden="true"
+                >+</span
+              >
+            </summary>
+            <p>
+              This release targets Windows 10 version 1809 or later and Windows
+              11 on 64-bit PCs. Windows 7, Windows 8, and 32-bit Windows are not
+              supported.
+            </p>
+          </details>
+          <details>
+            <summary>
+              Does it run all the time?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              It runs in your tray until you choose Quit. Launch at sign-in is
+              optional and can be changed in the tray menu or Windows startup
+              settings. Disabling reminders leaves the app available in your
+              tray.
+            </p>
+          </details>
+          <details>
+            <summary>
+              Does it collect my data?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              The desktop app has no network functionality, accounts, or
+              telemetry. Preferences and diagnostic logs stay on your PC. This
+              website uses no tracking scripts or cookies.
+            </p>
+          </details>
+          <details>
+            <summary>
+              Will Windows show an installer warning?<span aria-hidden="true"
+                >+</span
+              >
+            </summary>
+            <p>
+              The current release is unsigned, so Windows may show an
+              unknown-publisher or SmartScreen prompt. The download comes from
+              the project's GitHub release, which also includes a SHA-256
+              checksum for verification.
+            </p>
+          </details>
+          <details>
+            <summary>
+              Is there a Linux version?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              This release is for Windows. A separate Linux version may come
+              later. You can follow development on
+              <a href="https://github.com/sasukeuchiha14/drink-water">GitHub</a
+              >.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section
+        class="closing-section container"
+        aria-labelledby="closing-title"
+      >
+        <div>
+          <p class="eyebrow">One less thing on your mind</p>
+          <h2 id="closing-title">Make room for<br />your next sip.</h2>
+        </div>
+        <div class="closing-action">
+          <a
+            class="button button-primary"
+            href="https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe"
+            >Download for Windows
+            <span class="download-arrow" aria-hidden="true">↓</span></a
+          >
+          <p class="download-meta">Free. Open source. Made for your day.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer container">
+      <a class="brand" href="/"
+        ><img src="/assets/logo.ico" width="26" height="26" alt="" /><span
+          >Drink Water<span class="brand-dot">.</span></span
+        ></a
+      >
+      <p>Made by <a href="https://hardikgarg.me">Hardik Garg</a>.</p>
+      <div class="footer-links">
+        <a href="https://github.com/sasukeuchiha14/drink-water">Source code ↗</a
+        ><a href="/LICENSE.txt">MIT license</a>
+      </div>
+    </footer>
+  </body>
+</html>

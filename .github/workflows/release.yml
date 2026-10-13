@@ -1,0 +1,57 @@
+name: Publish Windows installer
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.x"
+      - name: Check release version
+        shell: pwsh
+        run: |
+          [xml]$properties = Get-Content windows/Directory.Build.props
+          $version = [string]$properties.Project.PropertyGroup.Version
+          if ($env:GITHUB_REF_NAME -ne "v$version") {
+            throw "The release tag must match windows/Directory.Build.props."
+          }
+      - name: Verify application
+        shell: pwsh
+        run: ./windows/scripts/Verify.ps1
+      - name: Get verified installer compiler
+        shell: pwsh
+        run: ./windows/scripts/Get-BuildTools.ps1 -SkipSdk
+      - name: Build installer and checksum
+        shell: pwsh
+        run: |
+          ./windows/scripts/Build.ps1
+          $installer = Get-ChildItem windows/artifacts/installer/*-Setup.exe | Select-Object -First 1
+          $releaseDirectory = "windows/artifacts/release"
+          New-Item -ItemType Directory -Path $releaseDirectory -Force | Out-Null
+          $releaseAsset = Join-Path $releaseDirectory "DrinkWater-Setup.exe"
+          Copy-Item -LiteralPath $installer.FullName -Destination $releaseAsset
+          $hash = (Get-FileHash -LiteralPath $releaseAsset -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  DrinkWater-Setup.exe" | Set-Content (Join-Path $releaseDirectory "SHA256SUMS.txt") -Encoding utf8NoBOM
+      - name: Publish release assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME `
+            windows/artifacts/release/DrinkWater-Setup.exe `
+            windows/artifacts/release/SHA256SUMS.txt `
+            --repo $env:GITHUB_REPOSITORY `
+            --title "Drink Water $env:GITHUB_REF_NAME" `
+            --notes-file windows/RELEASE_NOTES.md `
+            --verify-tag

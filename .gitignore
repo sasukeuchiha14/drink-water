@@ -1,0 +1,37 @@
+# Local tools and generated release files
+.tools/
+windows/.tools/
+windows/artifacts/
+**/bin/
+**/obj/
+**/TestResults/
+**/.vs/
+*.user
+*.suo
+
+# Frontend build and browser-check output
+**/node_modules/
+frontend/dist/
+frontend/output/
+output/
+.playwright-cli/
+.netlify/
+**/.DS_Store
+Thumbs.db
+
+# Local settings and signing credentials
+.env
+.env.*
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.pfx
+*.p12
+*.pem
+*.key
+
+# Keep application source assets and the Visual Studio solution
+!logo.ico
+!water.mp3
+!windows/DrinkWater.sln

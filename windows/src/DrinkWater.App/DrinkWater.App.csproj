@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>DrinkWater</AssemblyName>
+    <Product>Drink Water</Product>
+    <Description>A Windows tray application that reminds you to drink water.</Description>
+    <ApplicationIcon>../../../logo.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../DrinkWater.Core/DrinkWater.Core.csproj" />
+    <EmbeddedResource Include="../../../logo.ico" LogicalName="DrinkWater.App.logo.ico" />
+    <Content Include="../../../water.mp3" Link="Assets/water.mp3" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

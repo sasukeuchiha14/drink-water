@@ -1,0 +1,14 @@
+{
+  "name": "drink-water-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node --check src/main.js && node --test tests/*.test.mjs",
+    "preview": "node scripts/serve.mjs"
+  }
+}

@@ -1,0 +1,9 @@
+.tools/
+artifacts/
+**/bin/
+**/obj/
+.vs/
+TestResults/
+*.user
+*.suo
+!DrinkWater.sln
