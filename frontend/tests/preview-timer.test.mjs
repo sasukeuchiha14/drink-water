@@ -13,7 +13,11 @@ test("intervals use complete deadlines and reject unsupported values", () => {
   assert.equal(timer.remainingSeconds(), 600);
   timer.setInterval(60);
   assert.equal(timer.remainingSeconds(), 3600);
-  assert.throws(() => timer.setInterval(15), RangeError);
+  timer.setInterval(75);
+  assert.equal(timer.remainingSeconds(), 4500);
+  for (const invalid of [0, -1, 1441, 1.5, NaN, Infinity]) {
+    assert.throws(() => timer.setInterval(invalid), RangeError);
+  }
 });
 
 test("pause suppresses due reminders and enabling starts a fresh interval", () => {

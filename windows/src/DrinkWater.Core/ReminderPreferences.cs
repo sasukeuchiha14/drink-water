@@ -8,11 +8,13 @@ public sealed record ReminderPreferences
 
     public bool SoundEnabled { get; init; } = true;
 
+    public bool RandomSlogans { get; init; } = true;
+
     public void Validate()
     {
-        if (IntervalMinutes is not (10 or 30 or 60))
+        if (IntervalMinutes is < ReminderIntervals.MinimumMinutes or > ReminderIntervals.MaximumMinutes)
         {
-            throw new ArgumentOutOfRangeException(nameof(IntervalMinutes), "Choose 10, 30, or 60 minutes.");
+            throw new ArgumentOutOfRangeException(nameof(IntervalMinutes), "Choose a whole number of minutes from 1 to 1440.");
         }
     }
 }

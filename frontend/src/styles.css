@@ -449,6 +449,59 @@ h1 {
 .interval-group button:hover {
   border-color: var(--blue);
 }
+.custom-interval {
+  padding-block: 12px 2px;
+}
+.custom-interval label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.custom-interval-controls {
+  display: flex;
+  gap: 7px;
+}
+.custom-interval input,
+.preview-slogans textarea {
+  min-width: 0;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: var(--control);
+  color: var(--ink);
+  border-radius: 5px;
+  font-size: 12px;
+}
+.custom-interval input {
+  flex: 1;
+}
+.custom-interval button {
+  min-width: 55px;
+  border: 1px solid var(--selected-line);
+  border-radius: 5px;
+  background: var(--selected);
+  color: var(--blue);
+  font-size: 12px;
+}
+.preview-slogans summary {
+  min-height: 35px;
+  font-size: 12px;
+  font-weight: 400;
+}
+.preview-slogans textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.preview-error {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--ink);
+}
+[aria-invalid="true"] {
+  outline: 2px solid var(--blue);
+}
 .menu-settings {
   border-bottom: 1px solid var(--line);
   padding-block: 10px 8px;

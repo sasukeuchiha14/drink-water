@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net.Http;
 using System.Reflection;
 using System.Security;
@@ -26,6 +27,15 @@ public sealed class TrayApplicationContext : ApplicationContext
     private readonly ToolStripMenuItem _soundEnabled = new("Play water sound");
     private readonly ToolStripMenuItem _startupEnabled = new("Start with Windows");
     private readonly ToolStripMenuItem _remindNow = new("Remind me now");
+    private readonly ToolStripMenuItem _customIntervalLabel = new("Custom interval (minutes)") { Enabled = false };
+    private readonly ToolStripTextBox _customIntervalInput = new() { AutoSize = false, Width = 180, MaxLength = 4, ToolTipText = "Enter 1 to 1440 minutes, then press Enter or choose Set custom interval." };
+    private readonly ToolStripMenuItem _customIntervalApply = new("Set custom interval");
+    private readonly ToolStripMenuItem _customIntervalError = new("Enter 1 to 1440 whole minutes.") { Enabled = false, Visible = false };
+    private readonly ToolStripMenuItem _randomSlogans = new("Random slogans");
+    private readonly ToolStripMenuItem _sloganStatus = new() { Enabled = false };
+    private readonly SloganStore _slogans;
+    private readonly ReminderSloganSelector _sloganSelector = new();
+    private string? _sloganWarning;
     private readonly ToolStripMenuItem _checkUpdates = new("Check for updates...");
     private readonly ToolStripMenuItem _updateStatus = new() { Enabled = false };
     private readonly ToolStripMenuItem _downloadUpdate = new() { Visible = false };
@@ -43,10 +53,11 @@ public sealed class TrayApplicationContext : ApplicationContext
     private string? _pendingNotice;
     private bool _disposed;
 
-    public TrayApplicationContext(SettingsStore settings, SettingsLoadResult loaded, AppLog log)
+    public TrayApplicationContext(SettingsStore settings, SettingsLoadResult loaded, AppLog log, SloganStore slogans)
     {
         _log = log;
         _settings = settings;
+        _slogans = slogans;
         _canSave = loaded.CanSave;
         _pendingNotice = loaded.Warning;
         _schedule = new(loaded.Preferences);
@@ -61,7 +72,7 @@ public sealed class TrayApplicationContext : ApplicationContext
         using Icon original = new(stream);
         _icon = (Icon)original.Clone();
         _tray = new() { Icon = _icon, ContextMenuStrip = _menu, Visible = true, Text = "Drink Water" };
-        _delivery = new(() => Notify("Drink Water", "Time for a drink of water."), _sound.Play, _log.Write);
+        _delivery = new(() => Notify("Drink Water", NextSlogan()), _sound.Play, _log.Write);
         BuildMenu();
         _menu.Opening += (_, _) => RefreshMenu(includeStartup: true);
         _timer.Tick += Tick;
@@ -93,6 +104,37 @@ public sealed class TrayApplicationContext : ApplicationContext
             intervalMenu.DropDownItems.Add(item);
         }
 
+        intervalMenu.DropDownItems.AddRange([new ToolStripSeparator(), _customIntervalLabel,
+            _customIntervalInput, _customIntervalApply, _customIntervalError]);
+        intervalMenu.DropDownOpening += (_, _) =>
+        {
+            _customIntervalInput.Text = _schedule.Preferences.IntervalMinutes.ToString(CultureInfo.InvariantCulture);
+            _customIntervalError.Visible = false;
+        };
+        _customIntervalApply.Click += (_, _) => ApplyCustomInterval(intervalMenu);
+        _customIntervalInput.TextChanged += (_, _) =>
+        {
+            _customIntervalApply.Enabled = ReminderIntervals.TryParse(_customIntervalInput.Text, out _);
+            _customIntervalError.Visible = false;
+        };
+        _customIntervalInput.KeyDown += (_, args) =>
+        {
+            if (args.KeyCode == Keys.Enter)
+            {
+                args.SuppressKeyPress = true;
+                ApplyCustomInterval(intervalMenu);
+            }
+        };
+
+        ToolStripMenuItem sloganMenu = new("Notification slogans");
+        _randomSlogans.Click += (_, _) => ChangePreferences(_schedule.Preferences with { RandomSlogans = !_schedule.Preferences.RandomSlogans });
+        ToolStripMenuItem editSlogans = new("Edit slogan list...") { ToolTipText = "One slogan per line. Save to apply changes at the next reminder." };
+        editSlogans.Click += (_, _) => OpenSlogans(openFolder: false);
+        ToolStripMenuItem sloganFolder = new("Open slogans folder...");
+        sloganFolder.Click += (_, _) => OpenSlogans(openFolder: true);
+        sloganMenu.DropDownItems.AddRange([_randomSlogans, editSlogans, sloganFolder, new ToolStripSeparator(), _sloganStatus]);
+        sloganMenu.DropDownOpening += (_, _) => RefreshSlogans();
+
         _enabled.Click += (_, _) => ChangePreferences(_schedule.Preferences with { RemindersEnabled = !_schedule.Preferences.RemindersEnabled });
         _soundEnabled.Click += (_, _) => ChangePreferences(_schedule.Preferences with { SoundEnabled = !_schedule.Preferences.SoundEnabled });
         _startupEnabled.Click += ToggleStartup;
@@ -110,9 +152,22 @@ public sealed class TrayApplicationContext : ApplicationContext
         quit.Click += (_, _) => ExitThread();
         _checkUpdates.Click += async (_, _) => await CheckForUpdatesAsync();
         _downloadUpdate.Click += (_, _) => OpenUpdateDownload();
-        _menu.Items.AddRange([_countdown, new ToolStripSeparator(), intervalMenu, new ToolStripSeparator(),
+        _menu.Items.AddRange([_countdown, new ToolStripSeparator(), intervalMenu, sloganMenu, new ToolStripSeparator(),
             _enabled, _soundEnabled, _startupEnabled, startupSettings, new ToolStripSeparator(), _remindNow,
             _checkUpdates, _updateStatus, _downloadUpdate, new ToolStripSeparator(), quit]);
+    }
+
+    private void ApplyCustomInterval(ToolStripMenuItem intervalMenu)
+    {
+        if (!ReminderIntervals.TryParse(_customIntervalInput.Text, out int minutes))
+        {
+            _customIntervalError.Visible = true;
+            _customIntervalInput.TextBox.Focus();
+            return;
+        }
+
+        ChangePreferences(_schedule.Preferences with { IntervalMinutes = minutes });
+        intervalMenu.DropDown.Close(ToolStripDropDownCloseReason.ItemClicked);
     }
 
     private void Tick(object? sender, EventArgs args)
@@ -178,6 +233,10 @@ public sealed class TrayApplicationContext : ApplicationContext
             item.Checked = minutes == _schedule.Preferences.IntervalMinutes;
         }
 
+        int interval = _schedule.Preferences.IntervalMinutes;
+        _customIntervalLabel.Text = _intervals.ContainsKey(interval) ? "Custom interval (minutes)" : $"Custom interval: {interval} minutes";
+        _randomSlogans.Checked = _schedule.Preferences.RandomSlogans;
+
         if (includeStartup)
         {
             try
@@ -239,6 +298,36 @@ public sealed class TrayApplicationContext : ApplicationContext
 
     private static bool IsStartupError(Exception error) =>
         error is IOException or UnauthorizedAccessException or SecurityException or InvalidOperationException or ArgumentException;
+
+    private SloganLoadResult RefreshSlogans()
+    {
+        SloganLoadResult loaded = _slogans.Load();
+        if (loaded.Warning != _sloganWarning && loaded.Warning is not null)
+        {
+            _log.Write(loaded.Warning);
+        }
+
+        _sloganWarning = loaded.Warning;
+        _sloganStatus.Text = loaded.Warning is not null ? "List unavailable — using built-in slogans" : $"{loaded.Messages.Count} slogans — save edits to apply";
+        return loaded;
+    }
+
+    private string NextSlogan() => _sloganSelector.Next(RefreshSlogans().Messages, _schedule.Preferences.RandomSlogans);
+
+    private void OpenSlogans(bool openFolder)
+    {
+        try
+        {
+            _slogans.EnsureExists();
+            string target = openFolder ? Path.GetDirectoryName(_slogans.FilePath)! : _slogans.FilePath;
+            Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or Win32Exception or InvalidOperationException)
+        {
+            _log.Write("Opening the slogan file failed.", error);
+            Notify("Drink Water slogans", "Open %LOCALAPPDATA%\\DrinkWater\\slogans.txt in a text editor. Use one slogan per line and save your changes.");
+        }
+    }
 
     private async Task CheckForUpdatesAsync()
     {

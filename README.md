@@ -1,112 +1,42 @@
 # Drink Water
 
-A free Windows tray app that reminds you to take your next sip. Choose a
-10-minute, 30-minute, or one-hour interval, pause reminders, and manage launch at
-sign-in from the icon beside your clock.
+A free Windows tray app that reminds you to drink water.
 
-**[Download the Windows installer](https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe)**
-· [Release notes and checksum](https://github.com/sasukeuchiha14/drink-water/releases/latest)
+**[Download for Windows](https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe)** · [Website](https://drinkwater.hardikgarg.me/) · [Release notes](https://github.com/sasukeuchiha14/drink-water/releases/latest)
 
-The first release targets Windows 10 version 1809 or later and Windows 11 on x64.
-The installer includes .NET; Python and a separate .NET installation are not
-required. The current installer is unsigned.
+Supports Windows 10 version 1809 or later and Windows 11 on x64. The installer includes .NET and installs for your user account. Current releases are unsigned.
 
 ## Features
 
-- A live next-reminder countdown in the tray menu.
-- Quick intervals of 10 minutes, 30 minutes, and one hour.
-- Reminder and bundled water-sound controls.
-- Optional launch at sign-in, managed in the app or Windows settings.
-- Saved preferences, one instance per user session, and sleep/resume handling.
-- A per-user installer, shortcuts, upgrades, and clean uninstallation.
-- Manual update checks with a trusted GitHub installer download.
+- Live countdown and quick intervals of 10 minutes, 30 minutes, or one hour.
+- Custom intervals from 1 minute to 24 hours.
+- Random notification slogans or a fixed message from your editable local list.
+- Reminder, water sound, and Windows startup controls.
+- Saved preferences and manual update checks.
 
-The desktop app connects to the website only when you choose **Check for updates**,
-sending its installed version. There are no accounts or telemetry. Settings
-and diagnostic logs stay on your PC. Windows controls notification visibility,
-Do Not Disturb, and its own notification sound.
+## Use
 
-To update, run the newer installer over the existing installation. It preserves
-your preferences and startup choice; uninstalling first is unnecessary. Version
-1.0.0 users download the new installer from the website once to get update checks.
+Right-click the glass beside your clock. **Interval** includes a custom minutes field. Under **Notification slogans**, use **Random slogans** to shuffle messages and **Edit slogan list** to open `slogans.txt`. Write one message per line and save; edits apply at the next reminder. With random mode off, the first slogan is used.
 
-## Repository
+Preferences, slogans, and logs are stored in `%LOCALAPPDATA%\DrinkWater`. The app has no accounts or telemetry. It connects to the website only for update checks.
 
-```text
-windows/       C# app, tests, installer, and build scripts
-frontend/      Download website and Netlify deployment instructions
-.github/       Application checks and automatic release publishing
-logo.ico       Application, fixed tray, and website icon
-water.mp3      Original reminder sound
-drink_water.py Original Python implementation
-netlify.toml   Website build, routing, and security headers
-LICENSE        MIT license
-```
+To update, choose **Check for updates**, download the newer installer, and run it over your existing installation. Preferences and startup settings are retained; uninstalling first is unnecessary.
 
-The icon and audio are versioned source assets. Built installers are uploaded as
-GitHub release assets rather than committed to the repository. Local SDKs,
-package caches, build files, browser output, and signing credentials are ignored.
+## Build
 
-## Windows development
-
-Read the [Windows instructions](windows/README.md). From the repository root:
+Windows requires .NET 10 SDK and Inno Setup. Node.js 22 or later is needed for the website.
 
 ```powershell
 pwsh -NoProfile -File windows/scripts/Get-BuildTools.ps1
 pwsh -NoProfile -File windows/scripts/Verify.ps1
 pwsh -NoProfile -File windows/scripts/Build.ps1
-```
-
-The bootstrap verifies the .NET SDK checksum and the installer compiler's
-publisher signature. The project uses nullable references, compiler warnings as
-errors, SDK analyzers, formatting checks, and focused tests.
-
-## Download website and Netlify
-
-Read the [frontend instructions](frontend/README.md). The site uses static
-HTML/CSS/JavaScript, light and dark themes, an interactive browser preview, a
-Netlify update endpoint, and GitHub release downloads.
-
-```powershell
 cd frontend
 npm run check
 npm run build
-npm run preview
 ```
 
-Import this GitHub repository into Netlify. The root `netlify.toml` configures
-base directory `frontend`, publish directory `dist`, and the build command.
-Add `drinkwater.hardikgarg.me` as the primary domain and
-`drink-water.hardikgarg.me` as an alias, then configure your DNS and HTTPS in
-Netlify. Website pages on the alias redirect to the primary domain; the update
-API answers on both hosts. See the frontend README for the endpoint contract.
+- `windows/`: C# app, tests, installer, and build scripts.
+- `frontend/`: website, public assets, and update API.
+- `drink_water.py`: original Python implementation.
 
-## Publishing a Windows release
-
-Update `windows/Directory.Build.props` and `windows/RELEASE_NOTES.md`, verify the
-changes, commit them, then push a matching version tag:
-
-```powershell
-git tag v1.1.0
-git push origin v1.1.0
-```
-
-The release workflow builds and checks the Windows app, compiles the installer,
-and publishes `DrinkWater-Setup.exe` and `SHA256SUMS.txt`. The website's stable
-download link automatically selects the latest published release. GitHub Actions
-must be enabled for the repository. Public release signing requires your own
-certificate; signing credentials stay outside Git.
-
-## Original Python version
-
-The original script retains its fixed 30-minute reminder behavior:
-
-```powershell
-pip install plyer pygame
-python drink_water.py
-```
-
-A future Linux application can live separately under `linux/` using another
-language.
-
-Licensed under [MIT](LICENSE). Author: [Hardik Garg](https://hardikgarg.me).
+[MIT license](LICENSE) · [Hardik Garg](https://hardikgarg.me/)

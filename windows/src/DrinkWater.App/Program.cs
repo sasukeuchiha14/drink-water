@@ -49,7 +49,8 @@ internal static class Program
                 log.Write(loaded.Warning);
             }
 
-            using TrayApplicationContext context = new(settings, loaded, log);
+            SloganStore slogans = new(Path.Combine(dataDirectory, "slogans.txt"));
+            using TrayApplicationContext context = new(settings, loaded, log, slogans);
             Application.Run(context);
             return Environment.ExitCode;
         }

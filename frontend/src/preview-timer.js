@@ -7,8 +7,8 @@ export class PreviewTimer {
   }
 
   setInterval(minutes) {
-    if (![10, 30, 60].includes(minutes)) {
-      throw new RangeError("Choose 10, 30, or 60 minutes.");
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) {
+      throw new RangeError("Choose 1 to 1440 whole minutes.");
     }
     if (minutes !== this.minutes) {
       this.minutes = minutes;

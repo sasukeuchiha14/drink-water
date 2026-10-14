@@ -6,24 +6,94 @@
     <meta name="theme-color" content="#f8fafb" />
     <meta
       name="description"
-      content="A quiet drink-water reminder for your Windows tray. Choose 10, 30, or 60 minutes, pause whenever you like, and build a simple daily habit."
+      content="Download Drink Water, a free Windows water reminder. Set custom intervals, edit your notification slogans, and get quiet reminders from your system tray."
     />
     <meta
       property="og:title"
-      content="Drink Water — Your next sip, right on time"
+      content="Drink Water — Free Windows Water Reminder"
     />
     <meta
       property="og:description"
-      content="A small, free Windows tray app that makes remembering your next sip a little easier."
+      content="A free Windows tray app with custom intervals, editable reminder slogans, and optional startup. Your next sip, right on time."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://drinkwater.hardikgarg.me/" />
+    <meta property="og:site_name" content="Drink Water" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:image"
+      content="https://drinkwater.hardikgarg.me/social-card.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Drink Water, a free Windows tray reminder with custom intervals and your own slogans."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Drink Water — Free Windows Water Reminder"
+    />
+    <meta
+      name="twitter:description"
+      content="Custom intervals. Your own slogans. A quiet reminder in your Windows tray."
+    />
+    <meta
+      name="twitter:image"
+      content="https://drinkwater.hardikgarg.me/social-card.png"
+    />
+    <meta name="twitter:image:alt" content="Drink Water app for Windows." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="application-name" content="Drink Water" />
+    <meta name="author" content="Hardik Garg" />
     <link rel="canonical" href="https://drinkwater.hardikgarg.me/" />
     <link rel="icon" href="/assets/logo.ico" sizes="any" />
     <script src="/theme.js"></script>
     <link rel="stylesheet" href="/styles.css" />
     <script type="module" src="/main.js"></script>
-    <title>Drink Water — Your next sip, right on time</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://drinkwater.hardikgarg.me/#website",
+            "name": "Drink Water",
+            "url": "https://drinkwater.hardikgarg.me/",
+            "inLanguage": "en",
+            "description": "A free Windows water reminder with custom intervals and editable slogans."
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://drinkwater.hardikgarg.me/#webpage",
+            "url": "https://drinkwater.hardikgarg.me/",
+            "name": "Drink Water — Free Windows Water Reminder",
+            "isPartOf": { "@id": "https://drinkwater.hardikgarg.me/#website" },
+            "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "description": "Download the free Drink Water app for Windows 10 and Windows 11. Choose custom reminder intervals, edit your slogans, and manage startup from the tray.",
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://drinkwater.hardikgarg.me/social-card.png",
+              "width": 1200,
+              "height": 630
+            },
+            "author": {
+              "@type": "Person",
+              "name": "Hardik Garg",
+              "url": "https://hardikgarg.me/"
+            },
+            "potentialAction": {
+              "@type": "DownloadAction",
+              "target": "https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe"
+            }
+          }
+        ]
+      }
+    </script>
+    <title>Drink Water — Free Windows Water Reminder</title>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -74,8 +144,8 @@
             Your next sip,<br /><span class="accent-text">right on time.</span>
           </h1>
           <p class="hero-description">
-            A quiet reminder in your Windows tray. Set your interval, get on
-            with your day, and let Drink Water take care of the nudge.
+            A free water reminder in your Windows tray. Choose your interval,
+            add your own slogans, and let Drink Water take care of the nudge.
           </p>
           <a
             class="button button-primary"
@@ -153,6 +223,26 @@
                   1 hour
                 </button>
               </div>
+              <div class="custom-interval">
+                <label for="preview-custom-interval"
+                  >Custom interval <span>minutes</span></label
+                >
+                <div class="custom-interval-controls">
+                  <input
+                    id="preview-custom-interval"
+                    type="number"
+                    min="1"
+                    max="1440"
+                    step="1"
+                    value="45"
+                    aria-describedby="preview-custom-error"
+                  />
+                  <button id="preview-custom-apply" type="button">Set</button>
+                </div>
+                <p class="preview-error" id="preview-custom-error" hidden>
+                  Enter 1–1440 whole minutes.
+                </p>
+              </div>
               <div class="menu-settings">
                 <label class="menu-option" for="preview-enabled"
                   ><span>Enable reminders</span
@@ -176,6 +266,33 @@
                   ></span
                 ></label>
               </div>
+              <label class="menu-option" for="preview-random-slogans"
+                ><span>Random slogans</span
+                ><input
+                  type="checkbox"
+                  id="preview-random-slogans"
+                  checked /><span class="toggle" aria-hidden="true"></span
+              ></label>
+              <details class="preview-slogans">
+                <summary>
+                  Edit preview slogan list <span aria-hidden="true">+</span>
+                </summary>
+                <label class="visually-hidden" for="preview-slogans"
+                  >Preview slogans, one per line</label
+                >
+                <textarea
+                  id="preview-slogans"
+                  rows="3"
+                  maxlength="20100"
+                  aria-describedby="preview-slogan-error"
+                >
+Time for a drink of water.
+Small sips, steady habits.
+Pause. Sip. Carry on.</textarea>
+                <p class="preview-error" id="preview-slogan-error" hidden>
+                  Use 1–100 slogans, up to 200 characters each.
+                </p>
+              </details>
               <button class="remind-button" type="button" id="preview-remind">
                 <span aria-hidden="true">↻</span> Remind me now
               </button>
@@ -203,7 +320,7 @@
           </div>
           <figcaption id="preview-caption">
             <span class="preview-caption-dot" aria-hidden="true"></span
-            >Interactive preview. Try an interval or pause the reminders.
+            >Interactive preview. Try a custom interval and your own slogan.
           </figcaption>
           <p class="visually-hidden" id="preview-status" role="status"></p>
         </figure>
@@ -227,19 +344,19 @@
             <span class="feature-number">01 / YOUR PACE</span>
             <h3>A rhythm that fits.</h3>
             <p>
-              Choose a reminder every 10 minutes, 30 minutes, or one hour.
-              Change it whenever your day does.
+              Pick 10 minutes, 30 minutes, one hour, or a custom interval from 1
+              minute to 24 hours. Change it whenever your day does.
             </p>
             <div class="feature-detail" aria-hidden="true">
               <span>10m</span><span class="selected">30m</span><span>1h</span>
             </div>
           </article>
           <article class="feature">
-            <span class="feature-number">02 / YOUR SPACE</span>
-            <h3>There when you need it.</h3>
+            <span class="feature-number">02 / YOUR WORDS</span>
+            <h3>A reminder in your words.</h3>
             <p>
-              A small icon beside your clock. Pause reminders, switch off the
-              water sound, or check when your next nudge is due.
+              Write your own reminder slogans in a local text file. Shuffle them
+              at every reminder or use the first message from your list.
             </p>
             <div class="feature-detail">
               <span class="detail-status"
@@ -350,6 +467,20 @@
           </details>
           <details>
             <summary>
+              Can I use my own intervals and slogans?<span aria-hidden="true"
+                >+</span
+              >
+            </summary>
+            <p>
+              Yes. In the tray menu, open Interval and enter 1–1440 whole
+              minutes. Under Notification slogans, turn Random slogans on to
+              shuffle messages, or off to use the first. Edit slogan list opens
+              your local text file; save one slogan per line and your edits
+              apply at the next reminder.
+            </p>
+          </details>
+          <details>
+            <summary>
               Does it collect my data?<span aria-hidden="true">+</span>
             </summary>
             <p>
@@ -368,8 +499,9 @@
               Right-click the glass and choose Check for updates. If a newer
               version is available, choose Download version and run the
               installer. It upgrades your existing installation and keeps your
-              preferences. For version 1.0.0, download the latest installer here
-              first; uninstalling is unnecessary.
+              preferences. Version 1.1.0 can find 1.2.0 through this menu; run
+              the downloaded installer to finish the update. No uninstall is
+              needed.
             </p>
           </details>
           <details>
@@ -390,8 +522,7 @@
               Is there a Linux version?<span aria-hidden="true">+</span>
             </summary>
             <p>
-              This release is for Windows. A separate Linux version may come
-              later. You can follow development on
+              This release is for Windows. You can follow development on
               <a href="https://github.com/sasukeuchiha14/drink-water">GitHub</a
               >.
             </p>

@@ -1,4 +1,5 @@
 import { PreviewTimer, formatCountdown } from "./preview-timer.js";
+import { parseSlogans, SloganPreview } from "./slogan-preview.js";
 
 const timer = new PreviewTimer();
 const countdown = document.querySelector("#preview-countdown");
@@ -10,6 +11,14 @@ const remindNow = document.querySelector("#preview-remind");
 const notification = document.querySelector("#preview-notification");
 const intervalButtons = document.querySelectorAll("[data-interval]");
 const previewStatus = document.querySelector("#preview-status");
+const customInterval = document.querySelector("#preview-custom-interval");
+const customApply = document.querySelector("#preview-custom-apply");
+const customError = document.querySelector("#preview-custom-error");
+const randomSlogans = document.querySelector("#preview-random-slogans");
+const sloganInput = document.querySelector("#preview-slogans");
+const sloganError = document.querySelector("#preview-slogan-error");
+const sloganPreview = new SloganPreview();
+let messages = parseSlogans(sloganInput.value);
 let notificationTimeout;
 
 function render() {
@@ -28,12 +37,53 @@ function render() {
 }
 
 function showReminder() {
+  notification.querySelector("p").textContent = sloganPreview.next(
+    messages,
+    randomSlogans.checked,
+  );
   notification.hidden = false;
   clearTimeout(notificationTimeout);
   notificationTimeout = setTimeout(() => {
     notification.hidden = true;
   }, 4500);
 }
+
+function applyCustomInterval() {
+  const minutes = Number(customInterval.value);
+  if (
+    !/^\d+$/.test(customInterval.value) ||
+    !Number.isInteger(minutes) ||
+    minutes < 1 ||
+    minutes > 1440
+  ) {
+    customInterval.setAttribute("aria-invalid", "true");
+    customError.hidden = false;
+    return;
+  }
+  customInterval.removeAttribute("aria-invalid");
+  customError.hidden = true;
+  timer.setInterval(minutes);
+  previewStatus.textContent =
+    "Custom preview interval set to " + minutes + " minutes.";
+  render();
+}
+customApply.addEventListener("click", applyCustomInterval);
+customInterval.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    applyCustomInterval();
+  }
+});
+sloganInput.addEventListener("input", () => {
+  try {
+    messages = parseSlogans(sloganInput.value);
+    sloganInput.removeAttribute("aria-invalid");
+    sloganError.hidden = true;
+  } catch {
+    sloganInput.setAttribute("aria-invalid", "true");
+    sloganError.hidden = false;
+  }
+});
 
 for (const button of intervalButtons) {
   button.addEventListener("click", () => {

@@ -1,26 +1,11 @@
-# Drink Water 1.1.0
+# Drink Water 1.2.0
 
-A Windows tray application, now with:
+- Added a custom minutes field below the quick intervals. Choose any whole-minute interval from 1 minute to 24 hours.
+- Added **Random slogans**, **Edit slogan list**, and **Open slogans folder** to the tray menu.
+- Saved slogan edits apply at the next reminder. Random mode avoids immediate repeats; turning it off uses the first message.
+- Preserves existing reminder, sound, interval, and startup preferences when upgrading from 1.1.0.
+- Updated the website preview, search metadata, social sharing image, and Google verification file.
 
-- **Check for updates** in the tray menu, with the installed version and a
-  persistent result even when Windows hides notification balloons.
-- A **Download version** option for newer stable releases. It opens the official
-  GitHub installer in your browser; run it to upgrade and keep your settings.
-- Update endpoints on both website domains, numeric version comparison,
-  a fallback host, bounded responses, and trusted download URLs.
-- A website-only light/dark toggle that remembers your preference.
+From 1.1.0, choose **Check for updates**, then **Download version 1.2.0**. Run the downloaded installer over your current installation; no uninstall is needed.
 
-Version 1.0.0 does not include update checks. Download and run this installer
-once to receive the new feature; uninstalling first is unnecessary.
-
-Download `DrinkWater-Setup.exe` for Windows 10 version 1809 or later or Windows 11,
-on x64. The installer is unsigned. Update checks connect only when requested;
-the app has no accounts or telemetry and does not install updates automatically.
-
-`SHA256SUMS.txt` contains the installer checksum. In PowerShell, run:
-
-```powershell
-Get-FileHash -Algorithm SHA256 .\DrinkWater-Setup.exe
-```
-
-Compare the result with the checksum before running the installer.
+Windows 10 version 1809 or later and Windows 11 on x64. The installer is unsigned. `SHA256SUMS.txt` contains its SHA-256 checksum.

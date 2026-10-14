@@ -131,6 +131,7 @@ export function createUpdateHandler(loadRelease = createReleaseLoader()) {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store",
       "X-Content-Type-Options": "nosniff",
+      "X-Robots-Tag": "noindex",
       "X-Frame-Options": "DENY",
       "Referrer-Policy": "no-referrer",
       "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",

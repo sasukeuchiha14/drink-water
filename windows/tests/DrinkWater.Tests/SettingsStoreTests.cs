@@ -29,6 +29,8 @@ public sealed class SettingsStoreTests : IDisposable
     [InlineData(10, true, false)]
     [InlineData(30, false, true)]
     [InlineData(60, true, true)]
+    [InlineData(75, true, false)]
+    [InlineData(1440, false, true)]
     public void SavedPreferencesRoundTrip(int minutes, bool enabled, bool sound)
     {
         ReminderPreferences preferences = new() { IntervalMinutes = minutes, RemindersEnabled = enabled, SoundEnabled = sound };
@@ -53,7 +55,8 @@ public sealed class SettingsStoreTests : IDisposable
     [InlineData("not json")]
     [InlineData("null")]
     [InlineData("""{"schemaVersion":1,"intervalMinutes":30}""")]
-    [InlineData("""{"schemaVersion":1,"intervalMinutes":15,"remindersEnabled":true,"soundEnabled":true}""")]
+    [InlineData("""{"schemaVersion":1,"intervalMinutes":1441,"remindersEnabled":true,"soundEnabled":true}""")]
+    [InlineData("""{"schemaVersion":2,"intervalMinutes":30,"remindersEnabled":true,"soundEnabled":true}""")]
     public void CorruptSettingsAreBackedUpBeforeDefaultsAreUsed(string contents)
     {
         File.WriteAllText(_path, contents);
@@ -68,7 +71,7 @@ public sealed class SettingsStoreTests : IDisposable
     [Fact]
     public void NewerSettingsArePreservedAndNotMarkedWritable()
     {
-        const string contents = """{"schemaVersion":2,"intervalMinutes":60,"remindersEnabled":false,"soundEnabled":false}""";
+        const string contents = """{"schemaVersion":3,"intervalMinutes":60,"remindersEnabled":false,"soundEnabled":false}""";
         File.WriteAllText(_path, contents);
         SettingsLoadResult loaded = _store.Load();
         Assert.False(loaded.CanSave);
@@ -106,6 +109,27 @@ public sealed class SettingsStoreTests : IDisposable
         _store.Save(new());
         Assert.Throws<ArgumentOutOfRangeException>(() => _store.Save(new() { IntervalMinutes = -1 }));
         Assert.Equal(30, _store.Load().Preferences.IntervalMinutes);
+    }
+
+    [Fact]
+    public void VersionOneSettingsMigrateWithoutLosingPreferences()
+    {
+        const string contents = """{"schemaVersion":1,"intervalMinutes":60,"remindersEnabled":false,"soundEnabled":false}""";
+        File.WriteAllText(_path, contents);
+        SettingsLoadResult loaded = _store.Load();
+        Assert.True(loaded.CanSave);
+        Assert.Null(loaded.Warning);
+        Assert.Equal(60, loaded.Preferences.IntervalMinutes);
+        Assert.False(loaded.Preferences.RemindersEnabled);
+        Assert.False(loaded.Preferences.SoundEnabled);
+        Assert.True(loaded.Preferences.RandomSlogans);
+        Assert.Equal(contents, File.ReadAllText(_path));
+        _store.Save(loaded.Preferences with { RandomSlogans = false, IntervalMinutes = 75 });
+        SettingsLoadResult migrated = _store.Load();
+        Assert.False(migrated.Preferences.RandomSlogans);
+        Assert.Equal(75, migrated.Preferences.IntervalMinutes);
+        Assert.False(migrated.Preferences.RemindersEnabled);
+        Assert.False(migrated.Preferences.SoundEnabled);
     }
 
     public void Dispose()

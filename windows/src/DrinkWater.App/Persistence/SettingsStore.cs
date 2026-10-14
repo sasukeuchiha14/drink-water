@@ -29,16 +29,22 @@ public sealed class SettingsStore(string path)
 
             StoredSettings stored = JsonSerializer.Deserialize<StoredSettings>(stream, JsonOptions)
                 ?? throw new InvalidDataException("The settings file is empty.");
-            if (stored.SchemaVersion != 1)
+            if (stored.SchemaVersion is not (1 or 2))
             {
                 return new(new(), false, "These settings belong to another app version. They will be preserved; changes apply to this session only.");
+            }
+
+            if (stored.SchemaVersion == 2 && stored.RandomSlogans is null)
+            {
+                throw new InvalidDataException("The slogan selection is missing.");
             }
 
             ReminderPreferences preferences = new()
             {
                 IntervalMinutes = stored.IntervalMinutes,
                 RemindersEnabled = stored.RemindersEnabled,
-                SoundEnabled = stored.SoundEnabled
+                SoundEnabled = stored.SoundEnabled,
+                RandomSlogans = stored.RandomSlogans ?? true
             };
             preferences.Validate();
             return new(preferences, true, null);
@@ -74,7 +80,7 @@ public sealed class SettingsStore(string path)
         string temporaryPath = Path.Combine(directory, ".settings-" + Guid.NewGuid().ToString("N") + ".tmp");
         try
         {
-            StoredSettings stored = new(1, preferences.IntervalMinutes, preferences.RemindersEnabled, preferences.SoundEnabled);
+            StoredSettings stored = new(2, preferences.IntervalMinutes, preferences.RemindersEnabled, preferences.SoundEnabled, preferences.RandomSlogans);
             using (FileStream stream = new(temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
                 JsonSerializer.Serialize(stream, stored, JsonOptions);
@@ -100,5 +106,6 @@ public sealed class SettingsStore(string path)
         [property: JsonRequired] int SchemaVersion,
         [property: JsonRequired] int IntervalMinutes,
         [property: JsonRequired] bool RemindersEnabled,
-        [property: JsonRequired] bool SoundEnabled);
+        [property: JsonRequired] bool SoundEnabled,
+        bool? RandomSlogans = null);
 }

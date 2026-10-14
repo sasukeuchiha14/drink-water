@@ -8,6 +8,9 @@ public sealed class ReminderScheduleTests
     [InlineData(10)]
     [InlineData(30)]
     [InlineData(60)]
+    [InlineData(1)]
+    [InlineData(75)]
+    [InlineData(1440)]
     public void ReminderIsDueOnlyAfterTheFullInterval(int minutes)
     {
         ManualClock clock = new();
@@ -118,10 +121,20 @@ public sealed class ReminderScheduleTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    [InlineData(15)]
-    [InlineData(120)]
+    [InlineData(1441)]
+    [InlineData(int.MaxValue)]
     public void UnsupportedIntervalsAreRejected(int minutes) =>
         Assert.Throws<ArgumentOutOfRangeException>(() => new ReminderSchedule(new() { IntervalMinutes = minutes }));
+
+    [Fact]
+    public void ChangingSloganModeDoesNotResetTheCountdown()
+    {
+        ManualClock clock = new();
+        ReminderSchedule schedule = new(new(), clock);
+        clock.Advance(TimeSpan.FromMinutes(5));
+        schedule.UpdatePreferences(schedule.Preferences with { RandomSlogans = false });
+        Assert.Equal(TimeSpan.FromMinutes(25), schedule.Remaining);
+    }
 
     private sealed class ManualClock : TimeProvider
     {

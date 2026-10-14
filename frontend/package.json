@@ -1,6 +1,6 @@
 {
   "name": "drink-water-website",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check": "node --check src/main.js && node --check src/theme.js && node --check netlify/functions/update.mjs && node --test tests/*.test.mjs",
+    "check": "node --check src/main.js && node --check src/theme.js && node --check src/slogan-preview.js && node --check scripts/build.mjs && node --check netlify/functions/update.mjs && node --test tests/*.test.mjs",
     "preview": "node scripts/serve.mjs"
   }
 }

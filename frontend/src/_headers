@@ -1,0 +1,18 @@
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' __STRUCTURED_DATA_HASH__; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/404.html
+  X-Robots-Tag: noindex, follow
+
+/google0a09052122f3286f.html
+  X-Robots-Tag: noindex
+
+/assets/*
+  Cache-Control: public, max-age=3600
+
+/social-card.png
+  Cache-Control: public, max-age=3600
