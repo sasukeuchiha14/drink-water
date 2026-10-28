@@ -19,6 +19,7 @@ if (!version) {
 await mkdir(join(destination, "assets"), { recursive: true });
 for (const name of [
   "index.html",
+  "hi/index.html",
   "styles.css",
   "main.js",
   "theme.js",
@@ -28,6 +29,7 @@ for (const name of [
   "robots.txt",
   "sitemap.xml",
 ]) {
+  await mkdir(dirname(join(destination, name)), { recursive: true });
   await copyFile(join(frontendRoot, "src", name), join(destination, name));
 }
 await copyFile(
@@ -38,26 +40,33 @@ await copyFile(join(projectRoot, "LICENSE"), join(destination, "LICENSE.txt"));
 for (const name of ["google0a09052122f3286f.html", "social-card.png"]) {
   await copyFile(join(frontendRoot, "public", name), join(destination, name));
 }
-const html = (
-  await readFile(join(destination, "index.html"), "utf8")
-).replaceAll("__APP_VERSION__", version);
-if (!html.includes("releases/latest/download/DrinkWater-Setup.exe")) {
-  throw new Error("The production download link is missing.");
+const dataHashes = [];
+for (const page of ["index.html", "hi/index.html"]) {
+  const html = (await readFile(join(destination, page), "utf8")).replaceAll(
+    "__APP_VERSION__",
+    version,
+  );
+  if (!html.includes("releases/latest/download/DrinkWater-Setup.exe")) {
+    throw new Error(`The production download link is missing from ${page}.`);
+  }
+  const structuredData = html.match(
+    /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
+  )?.[1];
+  if (!structuredData)
+    throw new Error(`Structured data is missing from ${page}.`);
+  JSON.parse(structuredData);
+  dataHashes.push(
+    `'sha256-${createHash("sha256").update(structuredData).digest("base64")}'`,
+  );
+  await writeFile(join(destination, page), html);
 }
-await writeFile(join(destination, "index.html"), html);
-const structuredData = html.match(
-  /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
-)?.[1];
-if (!structuredData) throw new Error("The website structured data is missing.");
-JSON.parse(structuredData);
-const dataHash = createHash("sha256").update(structuredData).digest("base64");
 const headerTemplate = await readFile(
   join(frontendRoot, "src", "_headers"),
   "utf8",
 );
 await writeFile(
   join(destination, "_headers"),
-  headerTemplate.replaceAll("__STRUCTURED_DATA_HASH__", `'sha256-${dataHash}'`),
+  headerTemplate.replaceAll("__STRUCTURED_DATA_HASH__", dataHashes.join(" ")),
 );
 await writeFile(
   join(destination, "_redirects"),

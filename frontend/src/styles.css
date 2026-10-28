@@ -705,6 +705,65 @@ figcaption {
 .features {
   padding-block: 90px 85px;
 }
+.language-note {
+  margin-block: 18px 0;
+  font-size: 13px;
+  color: var(--blue);
+}
+.language-note a,
+.reminder-guide a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.reminder-guide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  padding-block: 65px 80px;
+  border-top: 1px solid var(--line);
+}
+.reminder-guide p {
+  max-width: 62ch;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.85;
+}
+.routine-list {
+  display: grid;
+  gap: 23px;
+}
+.routine-list h3 {
+  margin: 0 0 6px;
+}
+.routine-list p {
+  margin: 0;
+}
+.localized-hero h1 {
+  font-size: clamp(38px, 5vw, 62px);
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+.localized-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  padding: 35px;
+}
+.localized-card > img {
+  margin-bottom: 24px;
+}
+.localized-card h2 {
+  font-size: 29px;
+  line-height: 1.4;
+}
+.localized-card p {
+  color: var(--muted);
+}
+:lang(hi) h2,
+:lang(hi) h3 {
+  line-height: 1.5;
+  letter-spacing: 0;
+}
 .section-heading .eyebrow,
 .setup-copy .eyebrow,
 .faq-heading .eyebrow,
@@ -1020,6 +1079,7 @@ details[open] summary span {
     margin-top: 14px;
   }
   .setup-inner,
+  .reminder-guide,
   .faq-section {
     grid-template-columns: 1fr;
     gap: 32px;
