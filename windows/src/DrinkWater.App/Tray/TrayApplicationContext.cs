@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Reflection;
 using System.Security;
+using System.Security.Cryptography;
 using DrinkWater.App.Diagnostics;
 using DrinkWater.App.Persistence;
 using DrinkWater.App.Updates;
@@ -39,7 +40,14 @@ public sealed class TrayApplicationContext : ApplicationContext
     private readonly ToolStripMenuItem _checkUpdates = new("Check for updates...");
     private readonly ToolStripMenuItem _updateStatus = new() { Enabled = false };
     private readonly ToolStripMenuItem _downloadUpdate = new() { Visible = false };
-    private readonly HttpClient _updateClient = new(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = Timeout.InfiniteTimeSpan };
+    private readonly ToolStripMenuItem _checkAtStartup = new("Check for updates at startup");
+    private readonly NetworkSettingsStore _networkSettings;
+    private readonly Func<ProxySettings, HttpClient> _updateClientFactory;
+    private readonly bool _canSaveNetwork;
+    private readonly ProxyMenu _proxyMenu;
+    private NetworkPreferences _networkPreferences;
+    private bool _networkAvailable;
+    private bool _startupCheckPending = true;
     private readonly CancellationTokenSource _lifetime = new();
     private readonly ReleaseVersion _currentVersion;
     private UpdateCheckResult? _availableUpdate;
@@ -53,18 +61,30 @@ public sealed class TrayApplicationContext : ApplicationContext
     private string? _pendingNotice;
     private bool _disposed;
 
-    public TrayApplicationContext(SettingsStore settings, SettingsLoadResult loaded, AppLog log, SloganStore slogans)
+    public TrayApplicationContext(SettingsStore settings, SettingsLoadResult loaded, AppLog log, SloganStore slogans, NetworkSettingsStore networkSettings, Func<ProxySettings, HttpClient>? updateClientFactory = null)
     {
         _log = log;
         _settings = settings;
         _slogans = slogans;
         _canSave = loaded.CanSave;
         _pendingNotice = loaded.Warning;
+        _networkSettings = networkSettings;
+        _updateClientFactory = updateClientFactory ?? ProxyClientFactory.Create;
+        NetworkSettingsLoadResult network = networkSettings.Load();
+        _networkPreferences = network.Preferences;
+        _canSaveNetwork = network.CanSave;
+        _networkAvailable = network.CanConnect;
+        if (network.Warning is not null)
+        {
+            _log.Write(network.Warning);
+            _pendingNotice = string.Join(" ", new[] { _pendingNotice, network.Warning }.Where(message => message is not null));
+        }
+        _proxyMenu = new(() => _networkPreferences.Proxy, proxy => ApplyNetworkPreferences(_networkPreferences with { Proxy = proxy }, authorizesConnection: true));
         _schedule = new(loaded.Preferences);
         Version installed = Assembly.GetExecutingAssembly().GetName().Version
             ?? throw new InvalidOperationException("The installed version is unavailable.");
         _currentVersion = new(installed.Major, installed.Minor, installed.Build);
-        _updateStatus.Text = $"Version {_currentVersion}";
+        _updateStatus.Text = _networkAvailable ? $"Version {_currentVersion}" : $"Version {_currentVersion} — configure Proxy";
         _startup = new(Environment.ProcessPath ?? throw new InvalidOperationException("The application path is unavailable."));
         _sound = new(Path.Combine(AppContext.BaseDirectory, "Assets", "water.mp3"));
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("DrinkWater.App.logo.ico")
@@ -151,10 +171,11 @@ public sealed class TrayApplicationContext : ApplicationContext
         ToolStripMenuItem quit = new("Quit");
         quit.Click += (_, _) => ExitThread();
         _checkUpdates.Click += async (_, _) => await CheckForUpdatesAsync();
+        _checkAtStartup.Click += (_, _) => ApplyNetworkPreferences(_networkPreferences with { CheckForUpdatesAtStartup = !_networkPreferences.CheckForUpdatesAtStartup }, authorizesConnection: false);
         _downloadUpdate.Click += (_, _) => OpenUpdateDownload();
         _menu.Items.AddRange([_countdown, new ToolStripSeparator(), intervalMenu, sloganMenu, new ToolStripSeparator(),
             _enabled, _soundEnabled, _startupEnabled, startupSettings, new ToolStripSeparator(), _remindNow,
-            _checkUpdates, _updateStatus, _downloadUpdate, new ToolStripSeparator(), quit]);
+            _checkUpdates, _checkAtStartup, _updateStatus, _downloadUpdate, _proxyMenu.Item, new ToolStripSeparator(), quit]);
     }
 
     private void ApplyCustomInterval(ToolStripMenuItem intervalMenu)
@@ -182,6 +203,13 @@ public sealed class TrayApplicationContext : ApplicationContext
         {
             Notify("Drink Water settings", _pendingNotice);
             _pendingNotice = null;
+        }
+
+        if (_startupCheckPending)
+        {
+            _startupCheckPending = false;
+            if (_networkAvailable && _networkPreferences.CheckForUpdatesAtStartup)
+                _ = CheckForUpdatesAsync(isStartup: true);
         }
 
         if (_schedule.Tick())
@@ -236,6 +264,8 @@ public sealed class TrayApplicationContext : ApplicationContext
         int interval = _schedule.Preferences.IntervalMinutes;
         _customIntervalLabel.Text = _intervals.ContainsKey(interval) ? "Custom interval (minutes)" : $"Custom interval: {interval} minutes";
         _randomSlogans.Checked = _schedule.Preferences.RandomSlogans;
+        _checkAtStartup.Checked = _networkPreferences.CheckForUpdatesAtStartup;
+        _checkAtStartup.Enabled = _networkAvailable;
 
         if (includeStartup)
         {
@@ -329,20 +359,52 @@ public sealed class TrayApplicationContext : ApplicationContext
         }
     }
 
-    private async Task CheckForUpdatesAsync()
+    private void ApplyNetworkPreferences(NetworkPreferences preferences, bool authorizesConnection)
+    {
+        if (!_networkAvailable && !authorizesConnection)
+        {
+            Notify("Drink Water network", "Choose a mode under Proxy before enabling update checks.");
+            return;
+        }
+        preferences.Validate();
+        _networkPreferences = preferences;
+        _networkAvailable = true;
+        try
+        {
+            if (_canSaveNetwork) _networkSettings.Save(preferences);
+            else Notify("Drink Water network", "These network settings apply to this session only. The existing settings file was preserved.");
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            _log.Write("Saving network settings failed.");
+            Notify("Drink Water network", "Your network settings apply to this session, but could not be saved.");
+        }
+        RefreshMenu(includeStartup: false);
+    }
+
+    private async Task CheckForUpdatesAsync(bool isStartup = false)
     {
         if (_checkingUpdates || _disposed)
         {
             return;
         }
+        if (!isStartup) _startupCheckPending = false;
+
+        if (!_networkAvailable)
+        {
+            if (!isStartup) Notify("Drink Water updates", "Choose a valid mode under Proxy before checking for updates.");
+            return;
+        }
 
         _checkingUpdates = true;
         _checkUpdates.Enabled = false;
+        _proxyMenu.Item.Enabled = false;
         _checkUpdates.Text = "Checking for updates...";
         _updateStatus.Text = $"Version {_currentVersion} — checking...";
         try
         {
-            UpdateCheckResult result = await new UpdateChecker(_updateClient).CheckAsync(_currentVersion, _lifetime.Token);
+            using HttpClient client = _updateClientFactory(_networkPreferences.Proxy);
+            UpdateCheckResult result = await new UpdateChecker(client).CheckAsync(_currentVersion, _lifetime.Token);
             if (_disposed)
             {
                 return;
@@ -352,7 +414,7 @@ public sealed class TrayApplicationContext : ApplicationContext
             _downloadUpdate.Visible = result.UpdateAvailable;
             _downloadUpdate.Text = $"Download version {result.LatestVersion}...";
             _updateStatus.Text = result.UpdateAvailable ? $"Version {result.LatestVersion} available" : $"Version {_currentVersion} — up to date";
-            Notify("Drink Water updates", result.UpdateAvailable
+            if (!isStartup || result.UpdateAvailable) Notify("Drink Water updates", result.UpdateAvailable
                 ? $"Version {result.LatestVersion} is available. Right-click the tray icon and choose Download version {result.LatestVersion}. Run the installer to update and keep your settings."
                 : $"You're up to date. Installed version: {_currentVersion}.");
         }
@@ -360,13 +422,14 @@ public sealed class TrayApplicationContext : ApplicationContext
         {
             // Normal shutdown cancels the request without showing a notification.
         }
-        catch (HttpRequestException error)
+        catch (Exception error) when (error is HttpRequestException or CryptographicException or FormatException or ArgumentException or InvalidOperationException)
         {
-            _log.Write("Checking for updates failed.", error);
+            // Network exceptions can contain proxy details; log only the error type.
+            _log.Write($"Checking for updates failed ({error.GetType().Name}).");
             if (!_disposed)
             {
                 _updateStatus.Text = $"Version {_currentVersion} — update check failed";
-                Notify("Drink Water updates", "Couldn't check for updates. Check your connection and try again. Any previously found download remains available.");
+                if (!isStartup) Notify("Drink Water updates", "Couldn't check for updates. Check your connection, proxy settings, and saved proxy password. Any previously found download remains available.");
             }
         }
         finally
@@ -376,6 +439,7 @@ public sealed class TrayApplicationContext : ApplicationContext
             {
                 _checkUpdates.Text = "Check for updates...";
                 _checkUpdates.Enabled = true;
+                _proxyMenu.Item.Enabled = true;
             }
         }
     }
@@ -437,7 +501,6 @@ public sealed class TrayApplicationContext : ApplicationContext
 
         _disposed = true;
         _lifetime.Cancel();
-        _updateClient.Dispose();
         _lifetime.Dispose();
         _timer.Stop();
         _timer.Dispose();

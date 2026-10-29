@@ -705,6 +705,35 @@ figcaption {
 .features {
   padding-block: 90px 85px;
 }
+.release-banner {
+  margin-top: 40px;
+  padding: 28px 32px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+}
+.release-banner .eyebrow {
+  margin-bottom: 12px;
+}
+.release-banner h2 {
+  font-size: 28px;
+  margin-bottom: 22px;
+}
+.release-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.release-details h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+.release-details p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 0;
+}
 .language-note {
   margin-block: 18px 0;
   font-size: 13px;
@@ -1079,6 +1108,7 @@ details[open] summary span {
     margin-top: 14px;
   }
   .setup-inner,
+  .release-details,
   .reminder-guide,
   .faq-section {
     grid-template-columns: 1fr;

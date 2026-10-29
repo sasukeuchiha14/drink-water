@@ -50,7 +50,8 @@ internal static class Program
             }
 
             SloganStore slogans = new(Path.Combine(dataDirectory, "slogans.txt"));
-            using TrayApplicationContext context = new(settings, loaded, log, slogans);
+            NetworkSettingsStore networkSettings = new(Path.Combine(dataDirectory, "network.json"));
+            using TrayApplicationContext context = new(settings, loaded, log, slogans, networkSettings);
             Application.Run(context);
             return Environment.ExitCode;
         }

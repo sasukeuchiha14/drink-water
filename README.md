@@ -12,13 +12,16 @@ Supports Windows 10 version 1809 or later and Windows 11 on x64. The installer i
 - Custom intervals from 1 minute to 24 hours.
 - Random notification slogans or a fixed message from your editable local list.
 - Reminder, water sound, and Windows startup controls.
-- Saved preferences and manual update checks.
+- Optional startup update checks and manual checks; updates stay optional.
+- App-specific HTTP, HTTPS, and SOCKS5 proxies with protected saved passwords.
 
 ## Use
 
 Right-click the glass beside your clock. **Interval** includes a custom minutes field. Under **Notification slogans**, use **Random slogans** to shuffle messages and **Edit slogan list** to open `slogans.txt`. Write one message per line and save; edits apply at the next reminder. With random mode off, the first slogan is used.
 
-Preferences, slogans, and logs are stored in `%LOCALAPPDATA%\DrinkWater`. The app has no accounts or telemetry. It connects to the website only for update checks.
+**Proxy**, below the update controls, includes system, direct, and custom connections. Enter a server, port, and optional credentials, then apply. Proxy settings cover the app's update checks; installer downloads use your browser's network settings.
+
+Preferences, slogans, and logs are stored in `%LOCALAPPDATA%\DrinkWater`. The app has no accounts or telemetry. It checks for updates at launch unless you turn off **Check for updates at startup**.
 
 To update, choose **Check for updates**, download the newer installer, and run it over your existing installation. Preferences and startup settings are retained; uninstalling first is unnecessary.
 

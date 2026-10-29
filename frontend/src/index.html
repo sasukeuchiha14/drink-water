@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f8fafb" />
     <meta
       name="description"
-      content="Remember to drink water while you work. Download Drink Water, a free hydration reminder for Windows 10 and 11 with custom intervals and editable slogans."
+      content="Remember to drink water. A free Windows reminder with custom intervals, editable slogans, app-specific proxy settings, and optional startup update checks."
     />
     <meta
       property="og:title"
@@ -357,6 +357,30 @@ Pause. Sip. Carry on.</textarea>
         <span class="promise-line" aria-hidden="true"></span>
       </div>
 
+      <section class="release-banner container" aria-labelledby="release-title">
+        <p class="eyebrow">New in v__APP_VERSION__</p>
+        <h2 id="release-title">Updates, on your connection.</h2>
+        <div class="release-details">
+          <article>
+            <h3>A proxy just for Drink Water</h3>
+            <p>
+              Below the update controls, open Proxy to use your system settings,
+              connect directly, or configure HTTP, HTTPS, or SOCKS5 with
+              optional login credentials. Saved passwords are protected for your
+              Windows account.
+            </p>
+          </article>
+          <article>
+            <h3>A quiet check when you start</h3>
+            <p>
+              The app checks for updates at launch and lets you know when a
+              newer version is available. Turn Check for updates at startup off
+              whenever you like. Installing updates stays optional.
+            </p>
+          </article>
+        </div>
+      </section>
+
       <section class="features container" aria-labelledby="features-title">
         <div class="section-heading">
           <p class="eyebrow">Simple by design</p>
@@ -589,11 +613,12 @@ Pause. Sip. Carry on.</textarea>
               Does it collect my data?<span aria-hidden="true">+</span>
             </summary>
             <p>
-              The app connects to this website only when you choose Check for
-              updates, sending its installed version. It has no accounts or
-              telemetry. Preferences and logs stay on your PC. This website has
-              no tracking scripts or cookies; your theme choice is saved only in
-              your browser.
+              The app connects to this website to check for updates at startup
+              or when you choose Check for updates, sending its installed
+              version. You can disable startup checks in the tray menu. It has
+              no accounts or telemetry. Preferences and logs stay on your PC.
+              This website has no tracking scripts or cookies; your theme choice
+              is saved only in your browser.
             </p>
           </details>
           <details>
@@ -604,9 +629,25 @@ Pause. Sip. Carry on.</textarea>
               Right-click the glass and choose Check for updates. If a newer
               version is available, choose Download version and run the
               installer. It upgrades your existing installation and keeps your
-              preferences. Version 1.1.0 can find 1.2.0 through this menu; run
-              the downloaded installer to finish the update. No uninstall is
-              needed.
+              preferences. From version 1.3.0, an optional startup check also
+              notifies you about newer releases. Updates are never forced. No
+              uninstall is needed.
+            </p>
+          </details>
+          <details>
+            <summary>
+              Can I configure a proxy just for this app?<span aria-hidden="true"
+                >+</span
+              >
+            </summary>
+            <p>
+              Yes. Open Proxy below the update controls. Choose Use system
+              proxy, No proxy (direct), or Custom proxy. Custom mode supports
+              HTTP, HTTPS, and SOCKS5, a hostname or IP address, a port, and an
+              optional username and password. Apply the settings to use them for
+              the next update check. A failed custom proxy does not fall back to
+              a direct connection. Installer downloads open in your browser and
+              use its own network settings.
             </p>
           </details>
           <details>
