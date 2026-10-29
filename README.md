@@ -42,4 +42,4 @@ npm run build
 - `frontend/`: website, public assets, and update API.
 - `drink_water.py`: original Python implementation.
 
-[MIT license](LICENSE) · [Hardik Garg](https://hardikgarg.me/)
+[MIT license](LICENSE) · [Privacy policy](https://drinkwater.hardikgarg.me/policies/#privacy) · [Code signing policy](https://drinkwater.hardikgarg.me/policies/#code-signing) · [Hardik Garg](https://hardikgarg.me/)

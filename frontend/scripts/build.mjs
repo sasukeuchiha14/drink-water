@@ -20,6 +20,7 @@ await mkdir(join(destination, "assets"), { recursive: true });
 for (const name of [
   "index.html",
   "hi/index.html",
+  "policies/index.html",
   "styles.css",
   "main.js",
   "theme.js",

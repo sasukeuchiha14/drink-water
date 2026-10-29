@@ -1016,7 +1016,35 @@ details[open] summary span {
 }
 .footer-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 22px;
+}
+.policy-page {
+  max-width: 850px;
+  padding-block: 45px;
+}
+.policy-page h1 {
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 1.2;
+}
+.policy-page section {
+  padding-top: 30px;
+  scroll-margin-top: 24px;
+}
+.policy-page h2 {
+  font-size: 29px;
+}
+.policy-page p {
+  color: var(--muted);
+  line-height: 1.85;
+}
+.policy-page a {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.policy-page code {
+  overflow-wrap: anywhere;
 }
 
 @media (min-width: 1450px) {
