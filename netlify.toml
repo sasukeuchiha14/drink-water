@@ -25,6 +25,18 @@
   force = true
 
 [[redirects]]
+  from = "/hi"
+  to = "https://drinkwater.hardikgarg.me/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hi/*"
+  to = "https://drinkwater.hardikgarg.me/"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "https://drink-water.hardikgarg.me/*"
   to = "https://drinkwater.hardikgarg.me/:splat"
   status = 301

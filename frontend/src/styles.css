@@ -734,12 +734,6 @@ figcaption {
   line-height: 1.8;
   margin-bottom: 0;
 }
-.language-note {
-  margin-block: 18px 0;
-  font-size: 13px;
-  color: var(--blue);
-}
-.language-note a,
 .reminder-guide a {
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -766,32 +760,6 @@ figcaption {
 }
 .routine-list p {
   margin: 0;
-}
-.localized-hero h1 {
-  font-size: clamp(38px, 5vw, 62px);
-  line-height: 1.35;
-  letter-spacing: -0.025em;
-}
-.localized-card {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--white);
-  padding: 35px;
-}
-.localized-card > img {
-  margin-bottom: 24px;
-}
-.localized-card h2 {
-  font-size: 29px;
-  line-height: 1.4;
-}
-.localized-card p {
-  color: var(--muted);
-}
-:lang(hi) h2,
-:lang(hi) h3 {
-  line-height: 1.5;
-  letter-spacing: 0;
 }
 .section-heading .eyebrow,
 .setup-copy .eyebrow,

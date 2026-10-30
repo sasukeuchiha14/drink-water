@@ -2,10 +2,10 @@
   const storageKey = "drink-water-theme";
   const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
   let preference;
-  const labels =
-    document.documentElement.lang === "hi"
-      ? { dark: "गहरे रंग की थीम चुनें", light: "हल्के रंग की थीम चुनें" }
-      : { dark: "Switch to dark theme", light: "Switch to light theme" };
+  const labels = {
+    dark: "Switch to dark theme",
+    light: "Switch to light theme",
+  };
   try {
     const saved = localStorage.getItem(storageKey);
     if (saved === "light" || saved === "dark") preference = saved;

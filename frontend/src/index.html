@@ -20,7 +20,6 @@
     <meta property="og:url" content="https://drinkwater.hardikgarg.me/" />
     <meta property="og:site_name" content="Drink Water" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:locale:alternate" content="hi_IN" />
     <meta
       property="og:image"
       content="https://drinkwater.hardikgarg.me/social-card.png"
@@ -31,6 +30,17 @@
     <meta
       property="og:image:alt"
       content="Drink Water, a free Windows tray reminder with custom intervals and your own slogans."
+    />
+    <meta
+      property="og:image"
+      content="https://drinkwater.hardikgarg.me/drink-water-features.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta
+      property="og:image:alt"
+      content="Drink Water for Windows: custom reminder intervals, editable slogans, and optional startup."
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
@@ -50,21 +60,6 @@
     <meta name="application-name" content="Drink Water" />
     <meta name="author" content="Hardik Garg" />
     <link rel="canonical" href="https://drinkwater.hardikgarg.me/" />
-    <link
-      rel="alternate"
-      hreflang="en"
-      href="https://drinkwater.hardikgarg.me/"
-    />
-    <link
-      rel="alternate"
-      hreflang="hi"
-      href="https://drinkwater.hardikgarg.me/hi/"
-    />
-    <link
-      rel="alternate"
-      hreflang="x-default"
-      href="https://drinkwater.hardikgarg.me/"
-    />
     <link rel="icon" href="/assets/logo.ico" sizes="any" />
     <script src="/theme.js"></script>
     <link rel="stylesheet" href="/styles.css" />
@@ -78,7 +73,14 @@
             "@id": "https://drinkwater.hardikgarg.me/#website",
             "name": "Drink Water",
             "url": "https://drinkwater.hardikgarg.me/",
-            "inLanguage": ["en", "hi"],
+            "inLanguage": "en",
+            "image": {
+              "@type": "ImageObject",
+              "url": "https://drinkwater.hardikgarg.me/drink-water-logo.png",
+              "width": 512,
+              "height": 512,
+              "caption": "Drink Water glass icon"
+            },
             "description": "A free water reminder app for Windows with custom intervals and editable notification slogans."
           },
           {
@@ -88,9 +90,6 @@
             "name": "Drink Water — Free Water Reminder for Windows",
             "isPartOf": { "@id": "https://drinkwater.hardikgarg.me/#website" },
             "inLanguage": "en",
-            "workTranslation": {
-              "@id": "https://drinkwater.hardikgarg.me/hi/#webpage"
-            },
             "isAccessibleForFree": true,
             "description": "Download the free Drink Water app for Windows 10 and Windows 11. Choose custom reminder intervals, edit your slogans, and manage startup from the tray.",
             "primaryImageOfPage": {
@@ -98,6 +97,13 @@
               "url": "https://drinkwater.hardikgarg.me/social-card.png",
               "width": 1200,
               "height": 630
+            },
+            "image": {
+              "@type": "ImageObject",
+              "url": "https://drinkwater.hardikgarg.me/drink-water-features.png",
+              "width": 1200,
+              "height": 675,
+              "caption": "Drink Water reminder intervals, editable slogans, and optional Windows startup"
             },
             "author": {
               "@type": "Person",
@@ -189,11 +195,6 @@
             <span class="note-separator" aria-hidden="true">/</span> Yours to
             keep
           </div>
-          <p class="language-note">
-            <a href="/hi/" lang="hi" hreflang="hi"
-              >हिन्दी में पढ़ें <span aria-hidden="true">→</span></a
-            >
-          </p>
         </div>
 
         <figure class="preview" aria-labelledby="preview-caption">
@@ -465,9 +466,8 @@ Pause. Sip. Carry on.</textarea>
           <article>
             <h3>In words that feel like you</h3>
             <p>
-              Edit your local slogan list and write the nudge you want to see.
-              Unicode text is supported, so your notification can say
-              <span lang="hi">“पानी पीने का समय”</span>.
+              Edit your local slogan list and write the nudge you want to see,
+              such as “Pause. Sip. Carry on.” Your messages stay on your PC.
             </p>
           </article>
         </div>
@@ -708,7 +708,6 @@ Pause. Sip. Carry on.</textarea>
       <div class="footer-links">
         <a href="/policies/#privacy">Privacy policy</a>
         <a href="/policies/#code-signing">Code signing policy</a>
-        <a href="/hi/" lang="hi" hreflang="hi">हिन्दी</a>
         <a href="https://github.com/sasukeuchiha14/drink-water">Source code ↗</a
         ><a href="/LICENSE.txt">MIT license</a>
       </div>

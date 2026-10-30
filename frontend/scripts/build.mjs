@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
@@ -16,10 +16,11 @@ const version = projectProperties.match(
 if (!version) {
   throw new Error("The Windows project needs a semantic application version.");
 }
+// Remove generated output so deleted source pages cannot be redeployed.
+await rm(destination, { recursive: true, force: true });
 await mkdir(join(destination, "assets"), { recursive: true });
 for (const name of [
   "index.html",
-  "hi/index.html",
   "policies/index.html",
   "styles.css",
   "main.js",
@@ -38,11 +39,9 @@ await copyFile(
   join(destination, "assets", "logo.ico"),
 );
 await copyFile(join(projectRoot, "LICENSE"), join(destination, "LICENSE.txt"));
-for (const name of ["google0a09052122f3286f.html", "social-card.png"]) {
-  await copyFile(join(frontendRoot, "public", name), join(destination, name));
-}
+await cp(join(frontendRoot, "public"), destination, { recursive: true });
 const dataHashes = [];
-for (const page of ["index.html", "hi/index.html"]) {
+for (const page of ["index.html"]) {
   const html = (await readFile(join(destination, page), "utf8")).replaceAll(
     "__APP_VERSION__",
     version,
@@ -75,6 +74,8 @@ await writeFile(
     "/google0a09052122f3286f.html /google0a09052122f3286f.html 200!",
     "/api/update /.netlify/functions/update 200!",
     "/api/version /.netlify/functions/update 200!",
+    "/hi https://drinkwater.hardikgarg.me/ 301!",
+    "/hi/* https://drinkwater.hardikgarg.me/ 301!",
     "https://drink-water.hardikgarg.me/* https://drinkwater.hardikgarg.me/:splat 301!",
     "/download https://github.com/sasukeuchiha14/drink-water/releases/latest/download/DrinkWater-Setup.exe 302",
     "",

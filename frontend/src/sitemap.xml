@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://drinkwater.hardikgarg.me/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://drinkwater.hardikgarg.me/" />
-    <xhtml:link rel="alternate" hreflang="hi" href="https://drinkwater.hardikgarg.me/hi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://drinkwater.hardikgarg.me/" />
-  </url>
-  <url>
-    <loc>https://drinkwater.hardikgarg.me/hi/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://drinkwater.hardikgarg.me/" />
-    <xhtml:link rel="alternate" hreflang="hi" href="https://drinkwater.hardikgarg.me/hi/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://drinkwater.hardikgarg.me/" />
+    <image:image>
+      <image:loc>https://drinkwater.hardikgarg.me/social-card.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://drinkwater.hardikgarg.me/drink-water-features.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://drinkwater.hardikgarg.me/drink-water-logo.png</image:loc>
+    </image:image>
   </url>
 </urlset>

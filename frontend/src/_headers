@@ -16,3 +16,9 @@
 
 /social-card.png
   Cache-Control: public, max-age=3600
+
+/drink-water-features.png
+  Cache-Control: public, max-age=3600
+
+/drink-water-logo.png
+  Cache-Control: public, max-age=3600
